@@ -454,21 +454,25 @@ img { display: block; max-width: 100%; }
 .scenario-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1px;
-  background: var(--ghost-border);
-  border: 1px solid var(--ghost-border);
+  gap: 16px;
 }
 
 .scenario-card {
-  background: var(--black);
-  padding: 32px;
+  background: var(--ghost-bg);
+  border: 1px solid var(--ghost-border);
+  border-radius: 6px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   cursor: pointer;
-  transition: background 0.25s;
+  transition: background 0.3s, border-color 0.3s,
+              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
 
 .scenario-card::before {
@@ -477,15 +481,39 @@ img { display: block; max-width: 100%; }
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: var(--green);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.scenario-card:hover { background: var(--ghost-bg); }
+.scenario-card:hover {
+  background: rgba(240, 240, 250, 0.05);
+  border-color: rgba(240, 240, 250, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(118,185,0,0.1);
+}
+
 .scenario-card:hover::before { transform: scaleX(1); }
+
+/* Card header row */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-prompt {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--ghost-border);
+  transition: color 0.3s;
+}
+
+.scenario-card:hover .card-prompt { color: var(--green-dim); }
 
 /* Difficulty labels */
 .card-label {
@@ -493,11 +521,13 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
 }
 
-.card-label-beginner     { color: var(--green); }
-.card-label-intermediate { color: #df6500; }
-.card-label-advanced     { color: #e52020; }
+.card-label-beginner     { color: var(--green);  background: rgba(118,185,0,0.1); }
+.card-label-intermediate { color: #df6500;        background: rgba(223,101,0,0.1); }
+.card-label-advanced     { color: #e52020;        background: rgba(229,32,32,0.1); }
 
 .card-done {
   font-size: 9px;
@@ -511,7 +541,7 @@ img { display: block; max-width: 100%; }
 .card-meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .card-title {
@@ -543,10 +573,42 @@ img { display: block; max-width: 100%; }
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--faint);
+  background: rgba(240,240,250,0.03);
   border: 1px solid var(--ghost-border);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 2px;
+  transition: color 0.2s, border-color 0.2s;
 }
+
+.scenario-card:hover .tag {
+  color: rgba(240,240,250,0.4);
+  border-color: rgba(240,240,250,0.2);
+}
+
+/* Card CTA (inline arrow link) */
+.card-cta {
+  margin-top: auto;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.25s;
+}
+
+.scenario-card:hover .card-cta,
+.track-card:hover .card-cta { color: var(--green); }
+
+.card-cta .arrow {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scenario-card:hover .card-cta .arrow,
+.track-card:hover .card-cta .arrow { transform: translateX(4px); }
 
 /* ── Accordion ────────────────────────────────────────────────────────── */
 .accordion {
@@ -680,20 +742,25 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 .tracks-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1px;
-  background: var(--ghost-border);
-  border: 1px solid var(--ghost-border);
+  gap: 16px;
 }
 
 .track-card {
-  background: #030303;
-  padding: 36px;
+  background: rgba(3,3,3,0.9);
+  border: 1px solid var(--ghost-border);
+  border-radius: 6px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: background 0.25s;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s,
+              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
 }
 
 .track-card::after {
@@ -702,13 +769,19 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
   bottom: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(to right, transparent, var(--green), transparent);
   transform: scaleX(0);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.track-card:hover { background: rgba(240, 240, 250, 0.02); }
+.track-card:hover {
+  background: rgba(240, 240, 250, 0.03);
+  border-color: rgba(240,240,250,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(118,185,0,0.1);
+}
+
 .track-card:hover::after { transform: scaleX(1); }
 
 .track-env {

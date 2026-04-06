@@ -1,0 +1,20 @@
+{
+  "id": "explore-new-server",
+  "title": "You just got a new server",
+  "type": "standalone",
+  "difficulty": "beginner",
+  "tags": ["navigation", "exploration", "basics"],
+  "problem": "You have been given SSH access to a Linux server you know nothing about. Find out: what OS is it running, how much RAM and disk it has, who else is logged in, what services are running, and how long it has been online. A real engineer does this before touching anything.",
+  "setup": {
+    "description": "No setup needed. Run these on your own Linux machine, WSL, or any VPS.",
+    "commands": [],
+    "verify": "whoami"
+  },
+  "hints": [
+    "Every answer is a single command — uname, uptime, free, df, who. Just try them.",
+    "Add flags to get more detail — try uname -a, free -h, df -h",
+    "For running services try systemctl list-units --type=service --state=running"
+  ],
+  "commands": ["uname", "uptime", "free", "df", "who", "systemctl", "hostname"],
+  "solution": "1. OS info:      uname -a\n2. Hostname:     hostname\n3. Uptime:       uptime\n4. RAM:          free -h\n5. Disk:         df -h\n6. Logged in:    who\n7. Services:     systemctl list-units --type=service --state=running"
+}

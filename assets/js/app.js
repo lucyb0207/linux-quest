@@ -164,17 +164,21 @@ function renderTags(tags) {
 function buildScenarioCard(scenario) {
   const done = localStorage.getItem(`completed:${scenario.id}`) === 'true';
   const diff = (scenario.difficulty || 'beginner').toUpperCase();
+  const href = `scenario.html?id=${encodeURIComponent(scenario.id)}`;
   return `
-    <article class="scenario-card animate" role="article">
-      <div class="card-meta">
-        <span class="card-label ${difficultyClass(scenario.difficulty)}">${diff}</span>
-        ${done ? '<span class="card-done">✓ DONE</span>' : ''}
+    <a class="scenario-card animate" href="${href}">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="card-label ${difficultyClass(scenario.difficulty)}">${diff}</span>
+          ${done ? '<span class="card-done">✓ DONE</span>' : ''}
+        </div>
+        <span class="card-prompt" aria-hidden="true">&gt;_</span>
       </div>
       <h3 class="card-title">${(scenario.title || scenario.id).toUpperCase()}</h3>
       <p class="card-desc">${truncate(scenario.problem, 130)}</p>
       ${renderTags(scenario.tags)}
-      <a href="scenario.html?id=${encodeURIComponent(scenario.id)}" class="btn-ghost-sm">PRACTICE →</a>
-    </article>
+      <span class="card-cta">PRACTICE <span class="arrow">→</span></span>
+    </a>
   `;
 }
 
@@ -203,14 +207,17 @@ function buildTrackCard(track) {
   const env   = (track.environment || '').toUpperCase();
 
   return `
-    <article class="track-card animate" role="article">
+    <a class="track-card animate" href="${href}">
       ${env ? `<span class="track-env">${env} ENVIRONMENT</span>` : ''}
-      <h3 class="track-title">${(track.title || track.id).toUpperCase()}</h3>
+      <div class="card-header">
+        <h3 class="track-title">${(track.title || track.id).toUpperCase()}</h3>
+        <span class="card-prompt" aria-hidden="true">&gt;_</span>
+      </div>
       <p class="track-desc">${truncate(track.description, 150)}</p>
       ${buildTrackPath(ids)}
       <p class="track-count">${count} SCENARIO${count !== 1 ? 'S' : ''}</p>
-      <a href="${href}" class="btn-ghost-sm">START TRACK →</a>
-    </article>
+      <span class="card-cta">START TRACK <span class="arrow">→</span></span>
+    </a>
   `;
 }
 

@@ -1,0 +1,22 @@
+{
+  "id": "create-dev-user-ssh",
+  "title": "Onboard a new developer",
+  "type": "standalone",
+  "difficulty": "beginner",
+  "tags": ["users", "ssh", "permissions", "security"],
+  "problem": "A new developer is joining the team. Create a user account for them, give them sudo access, and set up SSH key authentication so they can log in without a password.",
+  "setup": {
+    "description": "Generate a throwaway SSH key pair to simulate the developer sending you their public key.",
+    "commands": [
+      "ssh-keygen -t ed25519 -C 'dev@company.com' -f ~/.ssh/dev_key -N ''"
+    ],
+    "note": "Works on any Linux machine or WSL. No VPS needed."
+  },
+  "hints": [
+    "On Ubuntu/Debian use adduser — it is interactive and friendlier than useradd. On CentOS/RHEL use useradd -m -s /bin/bash",
+    "sudo group is for Ubuntu/Debian. On CentOS/RHEL the group is called wheel — usermod -aG wheel developer",
+    "SSH key auth means putting the public key in /home/developer/.ssh/authorized_keys — permissions on that folder are strict and will silently fail if wrong"
+  ],
+  "commands": ["adduser", "usermod", "mkdir", "chmod", "chown", "su"],
+  "solution": "1. Create user:\n   Ubuntu/Debian:  sudo adduser developer\n   CentOS/RHEL:    sudo useradd -m -s /bin/bash developer\n\n2. Add to sudo group:\n   Ubuntu/Debian:  sudo usermod -aG sudo developer\n   CentOS/RHEL:    sudo usermod -aG wheel developer\n\n3. Create SSH dir:    sudo mkdir -p /home/developer/.ssh\n\n4. Copy public key:   sudo cp ~/.ssh/dev_key.pub /home/developer/.ssh/authorized_keys\n\n5. Fix permissions:   sudo chmod 700 /home/developer/.ssh\n                      sudo chmod 600 /home/developer/.ssh/authorized_keys\n\n6. Fix ownership:     sudo chown -R developer:developer /home/developer/.ssh\n\n7. Verify:            su - developer"
+}

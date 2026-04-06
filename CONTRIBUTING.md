@@ -28,8 +28,6 @@ The fastest way to contribute. No backend changes needed — just a JSON file.
 - `hints` array must have exactly 3 items — vague → specific.
 - `solution` must be fully numbered and copy-pasteable.
 - `commands` lists only the tool names, not the full answer.
-- Max 5 tags.
-- Standalone setup commands must use `~/linuxquest/` as the base directory. Never touch `/etc`, `/var`, `/usr`, or other system paths. Users must be able to run `rm -rf ~/linuxquest/` to clean up.
 
 ### Standalone scenario template
 

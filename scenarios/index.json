@@ -1,4 +1,4 @@
 {
-  "standalone": [],
+  "standalone": ["explore-new-server", "create-dev-user-ssh"],
   "tracks": []
 }

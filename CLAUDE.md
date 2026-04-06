@@ -112,13 +112,6 @@ scenario detail view. No rebuild needed to add a new scenario.
 - Hints array is always exactly 3, going from vague to specific
 - Solution must be fully numbered and copy-pasteable
 - Commands list is just the tool names, not the full answer
-- Max 5 tags per scenario
-
-## Safety rule
-All standalone setup commands must use ~/linuxquest/ as the base 
-directory. Never touch system paths like /etc, /var, /usr.
-User must be able to run rm -rf ~/linuxquest/ to clean everything up.
-Series scenarios are exempt as they run on a real VPS environment.
 
 ## UI sections
 
