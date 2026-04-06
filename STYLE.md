@@ -1,293 +1,194 @@
-# Design System: NVIDIA
+# Design System: SpaceX
 
 ## 1. Visual Theme & Atmosphere
 
-NVIDIA's website is a high-contrast, technology-forward experience that communicates raw computational power through design restraint. The page is built on a stark black (`#000000`) and white (`#ffffff`) foundation, punctuated by NVIDIA's signature green (`#76b900`) -- a color so specific it functions as a brand fingerprint. This is not the lush green of nature; it's the electric, lime-shifted green of GPU-rendered light, a color that sits between chartreuse and kelly green and immediately signals "NVIDIA" to anyone in technology.
+SpaceX's website is a full-screen cinematic experience that treats aerospace engineering like a film — every section is a scene, every photograph is a frame, and the interface disappears entirely behind the imagery. The design is pure black (`#000000`) with photography of rockets, space, and planets occupying 100% of the viewport. Text overlays sit directly on these photographs with no background panels, cards, or containers — just type on image, bold and unapologetic.
 
-The custom NVIDIA-EMEA font family (with Arial and Helvetica fallbacks) creates a clean, industrial typographic voice. Headings at 36px bold with tight 1.25 line-height create dense, authoritative blocks of text. The font lacks the geometric playfulness of Silicon Valley sans-serifs -- it's European, pragmatic, and engineering-focused. Body text runs at 15-16px, comfortable for reading but not generous, maintaining the sense that screen real estate is optimized like GPU memory.
+The typography system uses D-DIN, an industrial geometric typeface with DIN heritage (the German industrial standard). The defining characteristic is that virtually ALL text is uppercase with positive letter-spacing (0.96px–1.17px), creating a military/aerospace labeling system where every word feels stenciled onto a spacecraft hull. D-DIN-Bold at 48px with uppercase and 0.96px tracking for the hero creates headlines that feel like mission briefing titles. Even body text at 16px maintains the uppercase/tracked treatment at smaller scales.
 
-What distinguishes NVIDIA's design from other dark-background tech sites is the disciplined use of the green accent. The `#76b900` appears in borders (`2px solid #76b900`), link underlines (`underline 2px rgb(118, 185, 0)`), and CTAs -- but never as backgrounds or large surface areas on the main content. The green is a signal, not a surface. Combined with a deep shadow system (`rgba(0, 0, 0, 0.3) 0px 0px 5px`) and minimal border radius (1-2px), the overall effect is of precision engineering hardware rendered in pixels.
+What makes SpaceX distinctive is its radical minimalism: no shadows, no borders (except one ghost button border at `rgba(240,240,250,0.35)`), no color (only black and a spectral near-white `#f0f0fa`), no cards, no grids. The only visual element is photography + text. The ghost button with `rgba(240,240,250,0.1)` background and 32px radius is the sole interactive element — barely visible, floating over the imagery like a heads-up display. This isn't a design system in the traditional sense — it's a photographic exhibition with a type system and a single button.
 
 **Key Characteristics:**
-- NVIDIA Green (`#76b900`) as pure accent -- borders, underlines, and interactive highlights only
-- Black (`#000000`) dominant background with white (`#ffffff`) text on dark sections
-- NVIDIA-EMEA custom font with Arial/Helvetica fallback -- industrial, European, clean
-- Tight line-heights (1.25 for headings) creating dense, authoritative text blocks
-- Minimal border radius (1-2px) -- sharp, engineered corners throughout
-- Green-bordered buttons (`2px solid #76b900`) as primary interactive pattern
-- Font Awesome 6 Pro/Sharp icon system at weight 900 for sharp iconography
-- Multi-framework architecture (PrimeReact, Fluent UI, Element Plus) enabling rich interactive components
+- Pure black canvas with full-viewport cinematic photography — the interface is invisible
+- D-DIN / D-DIN-Bold — industrial DIN-heritage typeface
+- Universal uppercase + positive letter-spacing (0.96px–1.17px) — aerospace stencil aesthetic
+- Near-white spectral text (`#f0f0fa`) — not pure white, a slight blue-violet tint
+- Zero shadows, zero cards, zero containers — text on image only
+- Single ghost button: `rgba(240,240,250,0.1)` background with spectral border
+- Full-viewport sections — each section is a cinematic "scene"
+- No decorative elements — every pixel serves the photography
 
 ## 2. Color Palette & Roles
 
-### Primary Brand
-- **NVIDIA Green** (`#76b900`): The signature -- borders, link underlines, CTA outlines, active indicators. Never used as large surface fills.
-- **True Black** (`#000000`): Primary page background, text on light surfaces, dominant tone.
-- **Pure White** (`#ffffff`): Text on dark backgrounds, light section backgrounds, card surfaces.
+### Primary
+- **Space Black** (`#000000`): Page background, the void of space — at 50% opacity for overlay gradient
+- **Spectral White** (`#f0f0fa`): Text color — not pure white, a slight blue-violet tint that mimics starlight
 
-### Extended Brand Palette
-- **NVIDIA Green Light** (`#bff230`): Bright lime accent for highlights and hover states.
-- **Orange 400** (`#df6500`): Warm accent for alerts, featured badges, or energy-related contexts.
-- **Yellow 300** (`#ef9100`): Secondary warm accent, product category highlights.
-- **Yellow 050** (`#feeeb2`): Light warm surface for callout backgrounds.
+### Interactive
+- **Ghost Surface** (`rgba(240, 240, 250, 0.1)`): Button background — nearly invisible, 10% opacity
+- **Ghost Border** (`rgba(240, 240, 250, 0.35)`): Button border — spectral, 35% opacity
+- **Hover White** (`var(--white-100)`): Link hover state — full spectral white
 
-### Status & Semantic
-- **Red 500** (`#e52020`): Error states, destructive actions, critical alerts.
-- **Red 800** (`#650b0b`): Deep red for severe warning backgrounds.
-- **Green 500** (`#3f8500`): Success states, positive indicators (darker than brand green).
-- **Blue 700** (`#0046a4`): Informational accents, link hover alternative.
-
-### Decorative
-- **Purple 800** (`#4d1368`): Deep purple for gradient ends, premium/AI contexts.
-- **Purple 100** (`#f9d4ff`): Light purple surface tint.
-- **Fuchsia 700** (`#8c1c55`): Rich accent for special promotions or featured content.
-
-### Neutral Scale
-- **Gray 300** (`#a7a7a7`): Muted text, disabled labels.
-- **Gray 400** (`#898989`): Secondary text, metadata.
-- **Gray 500** (`#757575`): Tertiary text, placeholders, footers.
-- **Gray Border** (`#5e5e5e`): Subtle borders, divider lines.
-- **Near Black** (`#1a1a1a`): Dark surfaces, card backgrounds on black pages.
-
-### Interactive States
-- **Link Default (dark bg)** (`#ffffff`): White links on dark backgrounds.
-- **Link Default (light bg)** (`#000000`): Black links with green underline on light backgrounds.
-- **Link Hover** (`#3860be`): Blue shift on hover across all link variants.
-- **Button Hover** (`#1eaedb`): Teal highlight for button hover states.
-- **Button Active** (`#007fff`): Bright blue for active/pressed button states.
-- **Focus Ring** (`#000000 solid 2px`): Black outline for keyboard focus.
-
-### Shadows & Depth
-- **Card Shadow** (`rgba(0, 0, 0, 0.3) 0px 0px 5px 0px`): Subtle ambient shadow for elevated cards.
+### Gradient
+- **Dark Overlay** (`rgba(0, 0, 0, 0.5)`): Gradient overlay on photographs to ensure text legibility
 
 ## 3. Typography Rules
 
-### Font Family
-- **Primary**: `NVIDIA-EMEA`, with fallbacks: `Arial, Helvetica, sans-serif`
-- **Icon Font**: `Font Awesome 6 Pro` (weight 900 for solid icons, 700 for regular)
-- **Icon Sharp**: `Font Awesome 6 Sharp` (weight 300 for light icons, 400 for regular)
+### Font Families
+- **Display**: `D-DIN-Bold` — bold industrial geometric
+- **Body / UI**: `D-DIN`, fallbacks: `Arial, Verdana`
 
 ### Hierarchy
 
 | Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
 |------|------|------|--------|-------------|----------------|-------|
-| Display Hero | NVIDIA-EMEA | 36px (2.25rem) | 700 | 1.25 (tight) | normal | Maximum impact headlines |
-| Section Heading | NVIDIA-EMEA | 24px (1.50rem) | 700 | 1.25 (tight) | normal | Section titles, card headings |
-| Sub-heading | NVIDIA-EMEA | 22px (1.38rem) | 400 | 1.75 (relaxed) | normal | Feature descriptions, subtitles |
-| Card Title | NVIDIA-EMEA | 20px (1.25rem) | 700 | 1.25 (tight) | normal | Card and module headings |
-| Body Large | NVIDIA-EMEA | 18px (1.13rem) | 700 | 1.67 (relaxed) | normal | Emphasized body, lead paragraphs |
-| Body | NVIDIA-EMEA | 16px (1.00rem) | 400 | 1.50 | normal | Standard reading text |
-| Body Bold | NVIDIA-EMEA | 16px (1.00rem) | 700 | 1.50 | normal | Strong labels, nav items |
-| Body Small | NVIDIA-EMEA | 15px (0.94rem) | 400 | 1.67 (relaxed) | normal | Secondary content, descriptions |
-| Body Small Bold | NVIDIA-EMEA | 15px (0.94rem) | 700 | 1.50 | normal | Emphasized secondary content |
-| Button Large | NVIDIA-EMEA | 18px (1.13rem) | 700 | 1.25 (tight) | normal | Primary CTA buttons |
-| Button | NVIDIA-EMEA | 16px (1.00rem) | 700 | 1.25 (tight) | normal | Standard buttons |
-| Button Compact | NVIDIA-EMEA | 14.4px (0.90rem) | 700 | 1.00 (tight) | 0.144px | Small/compact buttons |
-| Link | NVIDIA-EMEA | 14px (0.88rem) | 700 | 1.43 | normal | Navigation links |
-| Link Uppercase | NVIDIA-EMEA | 14px (0.88rem) | 700 | 1.43 | normal | `text-transform: uppercase`, nav labels |
-| Caption | NVIDIA-EMEA | 14px (0.88rem) | 600 | 1.50 | normal | Metadata, timestamps |
-| Caption Small | NVIDIA-EMEA | 12px (0.75rem) | 400 | 1.25 (tight) | normal | Fine print, legal |
-| Micro Label | NVIDIA-EMEA | 10px (0.63rem) | 700 | 1.50 | normal | `text-transform: uppercase`, tiny badges |
-| Micro | NVIDIA-EMEA | 11px (0.69rem) | 700 | 1.00 (tight) | normal | Smallest UI text |
+| Display Hero | D-DIN-Bold | 48px (3.00rem) | 700 | 1.00 (tight) | 0.96px | `text-transform: uppercase` |
+| Body | D-DIN | 16px (1.00rem) | 400 | 1.50–1.70 | normal | Standard reading text |
+| Nav Link Bold | D-DIN | 13px (0.81rem) | 700 | 0.94 (tight) | 1.17px | `text-transform: uppercase` |
+| Nav Link | D-DIN | 12px (0.75rem) | 400 | 2.00 (relaxed) | normal | `text-transform: uppercase` |
+| Caption Bold | D-DIN | 13px (0.81rem) | 700 | 0.94 (tight) | 1.17px | `text-transform: uppercase` |
+| Caption | D-DIN | 12px (0.75rem) | 400 | 1.00 (tight) | normal | `text-transform: uppercase` |
+| Micro | D-DIN | 10px (0.63rem) | 400 | 0.94 (tight) | 1px | `text-transform: uppercase` |
 
 ### Principles
-- **Bold as the default voice**: NVIDIA leans heavily on weight 700 for headings, buttons, links, and labels. The 400 weight is reserved for body text and descriptions -- everything else is bold, projecting confidence and authority.
-- **Tight headings, relaxed body**: Heading line-height is consistently 1.25 (tight), while body text relaxes to 1.50-1.67. This contrast creates visual density at the top of content blocks and comfortable readability in paragraphs.
-- **Uppercase for navigation**: Link labels use `text-transform: uppercase` with weight 700, creating a navigation voice that reads like hardware specification labels.
-- **No decorative tracking**: Letter-spacing is normal throughout, except for compact buttons (0.144px). The font itself carries the industrial character without manipulation.
+- **Universal uppercase**: Nearly every text element uses `text-transform: uppercase`. This creates a systematic military/aerospace voice where all communication feels like official documentation.
+- **Positive letter-spacing as identity**: 0.96px on display, 1.17px on nav — the wide tracking creates the stenciled, industrial feel that connects to DIN's heritage as a German engineering standard.
+- **Two weights, strict hierarchy**: D-DIN-Bold (700) for headlines and nav emphasis, D-DIN (400) for body. No medium or semibold weights exist in the system.
+- **Tight line-heights**: 0.94–1.00 across most text — compressed, efficient, mission-critical communication.
 
 ## 4. Component Stylings
 
 ### Buttons
 
-**Primary (Green Border)**
-- Background: `transparent`
-- Text: `#000000`
-- Padding: 11px 13px
-- Border: `2px solid #76b900`
-- Radius: 2px
-- Font: 16px weight 700
-- Hover: background `#1eaedb`, text `#ffffff`
-- Active: background `#007fff`, text `#ffffff`, border `1px solid #003eff`, scale(1)
-- Focus: background `#1eaedb`, text `#ffffff`, outline `#000000 solid 2px`, opacity 0.9
-- Use: Primary CTA ("Learn More", "Explore Solutions")
-
-**Secondary (Green Border Thin)**
-- Background: transparent
-- Border: `1px solid #76b900`
-- Radius: 2px
-- Use: Secondary actions, alternative CTAs
-
-**Compact / Inline**
-- Font: 14.4px weight 700
-- Letter-spacing: 0.144px
-- Line-height: 1.00
-- Use: Inline CTAs, compact navigation
+**Ghost Button**
+- Background: `rgba(240, 240, 250, 0.1)` (barely visible)
+- Text: Spectral White (`#f0f0fa`)
+- Padding: 18px
+- Radius: 32px
+- Border: `1px solid rgba(240, 240, 250, 0.35)`
+- Hover: background brightens, text to `var(--white-100)`
+- Use: The only button variant — "LEARN MORE" CTAs on photography
 
 ### Cards & Containers
-- Background: `#ffffff` (light) or `#1a1a1a` (dark sections)
-- Border: none (clean edges) or `1px solid #5e5e5e`
-- Radius: 2px
-- Shadow: `rgba(0, 0, 0, 0.3) 0px 0px 5px 0px` for elevated cards
-- Hover: shadow intensification
-- Padding: 16-24px internal
+- **None.** SpaceX does not use cards, panels, or containers. All content is text directly on full-viewport photographs. The absence of containers IS the design.
 
-### Links
-- **On Dark Background**: `#ffffff`, no underline, hover shifts to `#3860be`
-- **On Light Background**: `#000000` or `#1a1a1a`, underline `2px solid #76b900`, hover shifts to `#3860be`, underline removed
-- **Green Links**: `#76b900`, hover shifts to `#3860be`
-- **Muted Links**: `#666666`, hover shifts to `#3860be`
+### Inputs & Forms
+- Not present on the homepage. The site is purely presentational.
 
 ### Navigation
-- Dark black background (`#000000`)
-- Logo left-aligned, prominent NVIDIA wordmark
-- Links: NVIDIA-EMEA 14px weight 700 uppercase, `#ffffff`
-- Hover: color shift, no underline change
-- Mega-menu dropdowns for product categories
-- Sticky on scroll with backdrop
+- Transparent overlay nav on photography
+- D-DIN 13px weight 700, uppercase, 1.17px tracking
+- Spectral white text on dark imagery
+- Logo: SpaceX wordmark at 147x19px
+- Mobile: hamburger collapse
 
 ### Image Treatment
-- Product/GPU renders as hero images, often full-width
-- Screenshot images with subtle shadow for depth
-- Green gradient overlays on dark hero sections
-- Circular avatar containers with 50% radius
-
-### Distinctive Components
-
-**Product Cards**
-- Clean white or dark card with minimal radius (2px)
-- Green accent border or underline on title
-- Bold heading + lighter description pattern
-- CTA with green border at bottom
-
-**Tech Spec Tables**
-- Industrial grid layouts
-- Alternating row backgrounds (subtle gray shift)
-- Bold labels, regular values
-- Green highlights for key metrics
-
-**Cookie/Consent Banner**
-- Fixed bottom positioning
-- Rounded buttons (2px radius)
-- Gray border treatments
+- Full-viewport (100vh) photography sections
+- Professional aerospace photography: rockets, Mars, space
+- Dark gradient overlays (`rgba(0,0,0,0.5)`) for text legibility
+- Each section = one full-screen photograph with text overlay
+- No border radius, no frames — edge-to-edge imagery
 
 ## 5. Layout Principles
 
 ### Spacing System
 - Base unit: 8px
-- Scale: 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 15px
-- Primary padding values: 8px, 11px, 13px, 16px, 24px, 32px
-- Section spacing: 48-80px vertical padding
+- Scale: 3px, 5px, 12px, 15px, 18px, 20px, 24px, 30px
+- Minimal scale — spacing is not the organizing principle; photography is
 
 ### Grid & Container
-- Max content width: approximately 1200px (contained)
-- Full-width hero sections with contained text
-- Feature sections: 2-3 column grids for product cards
-- Single-column for article/blog content
-- Sidebar layouts for documentation
+- No traditional grid — each section is a full-viewport cinematic frame
+- Text is positioned absolutely or with generous padding over imagery
+- Left-aligned text blocks on photography backgrounds
+- No max-width container — content bleeds to viewport edges
 
 ### Whitespace Philosophy
-- **Purposeful density**: NVIDIA uses tighter spacing than typical SaaS sites, reflecting the density of technical content. White space exists to separate concepts, not to create luxury emptiness.
-- **Section rhythm**: Dark sections alternate with white sections, using background color (not just spacing) to separate content blocks.
-- **Card density**: Product cards sit close together with 16-20px gaps, creating a catalog feel rather than a gallery feel.
+- **Photography IS the whitespace**: Empty space in the design is never empty — it's filled with the dark expanse of space, the curve of a planet, or the flame of a rocket engine. Traditional whitespace concepts don't apply.
+- **Vertical pacing through viewport**: Each section is exactly one viewport tall, creating a rhythmic scroll where each "page" reveals a new scene.
 
 ### Border Radius Scale
-- Micro (1px): Inline spans, tiny elements
-- Standard (2px): Buttons, cards, containers, inputs -- the default for nearly everything
-- Circle (50%): Avatar images, circular tab indicators
+- Sharp (4px): Small dividers, utility elements
+- Button (32px): Ghost buttons — the only rounded element
 
 ## 6. Depth & Elevation
 
 | Level | Treatment | Use |
 |-------|-----------|-----|
-| Flat (Level 0) | No shadow | Page backgrounds, inline text |
-| Subtle (Level 1) | `rgba(0,0,0,0.3) 0px 0px 5px 0px` | Standard cards, modals |
-| Border (Level 1b) | `1px solid #5e5e5e` | Content dividers, section borders |
-| Green accent (Level 2) | `2px solid #76b900` | Active elements, CTAs, selected items |
-| Focus (Accessibility) | `2px solid #000000` outline | Keyboard focus ring |
+| Photography (Level 0) | Full-viewport imagery | Background layer — always present |
+| Overlay (Level 1) | `rgba(0, 0, 0, 0.5)` gradient | Text legibility layer over photography |
+| Text (Level 2) | Spectral white text, no shadow | Content layer — text floats directly on image |
+| Ghost (Level 3) | `rgba(240, 240, 250, 0.1)` surface | Barely-visible interactive layer |
 
-**Shadow Philosophy**: NVIDIA's depth system is minimal and utilitarian. There is essentially one shadow value -- a 5px ambient blur at 30% opacity -- used sparingly for cards and modals. The primary depth signal is not shadow but _color contrast_: black backgrounds next to white sections, green borders on black surfaces. This creates hardware-like visual layering where depth comes from material difference, not simulated light.
+**Shadow Philosophy**: SpaceX uses ZERO shadows. In a design built entirely on photography, shadows are meaningless — every surface is already a photograph with natural lighting. Depth comes from the photographic content itself: the receding curvature of Earth, the diminishing trail of a rocket, the atmospheric haze around Mars.
 
-### Decorative Depth
-- Green gradient washes behind hero content
-- Dark-to-darker gradients (black to near-black) for section transitions
-- No glassmorphism or blur effects -- clarity over atmosphere
+## 7. Do's and Don'ts
 
-## 7. Responsive Behavior
+### Do
+- Use full-viewport photography as the primary design element — every section is a scene
+- Apply uppercase + positive letter-spacing to ALL text — the aerospace stencil voice
+- Use D-DIN exclusively — no other fonts exist in the system
+- Keep the color palette to black + spectral white (`#f0f0fa`) only
+- Use ghost buttons (`rgba(240,240,250,0.1)`) as the sole interactive element
+- Apply dark gradient overlays for text legibility on photographs
+- Let photography carry the emotional weight — the type system is functional, not expressive
+
+### Don't
+- Don't add cards, panels, or containers — text sits directly on photography
+- Don't use shadows — they have no meaning in a photographic context
+- Don't introduce colors — the palette is strictly achromatic with spectral tint
+- Don't use sentence case — everything is uppercase
+- Don't use negative letter-spacing — all tracking is positive (0.96px–1.17px)
+- Don't reduce photography to thumbnails — every image is full-viewport
+- Don't add decorative elements (icons, badges, dividers) — the design is photography + type + one button
+
+## 8. Responsive Behavior
 
 ### Breakpoints
 | Name | Width | Key Changes |
 |------|-------|-------------|
-| Mobile Small | <375px | Compact single column, reduced padding |
-| Mobile | 375-425px | Standard mobile layout |
-| Mobile Large | 425-600px | Wider mobile, some 2-col hints |
-| Tablet Small | 600-768px | 2-column grids begin |
-| Tablet | 768-1024px | Full card grids, expanded nav |
-| Desktop | 1024-1350px | Standard desktop layout |
-| Large Desktop | >1350px | Maximum content width, generous margins |
+| Mobile | <600px | Stacked, reduced padding, smaller type |
+| Tablet Small | 600–960px | Adjusted layout |
+| Tablet | 960–1280px | Standard scaling |
+| Desktop | 1280–1350px | Full layout |
+| Large Desktop | 1350–1500px | Expanded |
+| Ultra-wide | >1500px | Maximum viewport |
 
 ### Touch Targets
-- Buttons use 11px 13px padding for comfortable tap targets
-- Navigation links at 14px uppercase with adequate spacing
-- Green-bordered buttons provide high-contrast touch targets on dark backgrounds
-- Mobile: hamburger menu collapse with full-screen overlay
+- Ghost buttons: 18px padding provides adequate touch area
+- Navigation links: uppercase with generous letter-spacing aids readability
 
 ### Collapsing Strategy
-- Hero: 36px heading scales down proportionally
-- Navigation: full horizontal nav collapses to hamburger menu at ~1024px
-- Product cards: 3-column to 2-column to single column stacked
-- Footer: multi-column grid collapses to single stacked column
-- Section spacing: 64-80px reduces to 32-48px on mobile
-- Images: maintain aspect ratio, scale to container width
+- Photography: maintains full-viewport at all sizes, content reposition
+- Hero text: 48px → scales down proportionally
+- Navigation: horizontal → hamburger
+- Text blocks: reposition but maintain overlay-on-photography pattern
+- Full-viewport sections maintained on mobile
 
 ### Image Behavior
-- GPU/product renders maintain high resolution at all sizes
-- Hero images scale proportionally with viewport
-- Card images use consistent aspect ratios
-- Full-bleed dark sections maintain edge-to-edge treatment
-
-## 8. Responsive Behavior (Extended)
-
-### Typography Scaling
-- Display 36px scales to ~24px on mobile
-- Section headings 24px scale to ~20px on mobile
-- Body text maintains 15-16px across all breakpoints
-- Button text maintains 16px for consistent tap targets
-
-### Dark/Light Section Strategy
-- Dark sections (black bg, white text) alternate with light sections (white bg, black text)
-- The green accent remains consistent across both surface types
-- On dark: links are white, underlines are green
-- On light: links are black, underlines are green
-- This alternation creates natural scroll rhythm and content grouping
+- Edge-to-edge photography at all viewport sizes
+- Background-size: cover with center focus
+- Dark overlay gradients adapt to content position
+- No art direction changes — same photographs, responsive positioning
 
 ## 9. Agent Prompt Guide
 
 ### Quick Color Reference
-- Primary accent: NVIDIA Green (`#76b900`)
-- Background dark: True Black (`#000000`)
-- Background light: Pure White (`#ffffff`)
-- Heading text (dark bg): White (`#ffffff`)
-- Heading text (light bg): Black (`#000000`)
-- Body text (light bg): Black (`#000000`) or Near Black (`#1a1a1a`)
-- Body text (dark bg): White (`#ffffff`) or Gray 300 (`#a7a7a7`)
-- Link hover: Blue (`#3860be`)
-- Border accent: `2px solid #76b900`
-- Button hover: Teal (`#1eaedb`)
+- Background: Space Black (`#000000`)
+- Text: Spectral White (`#f0f0fa`)
+- Button background: Ghost (`rgba(240, 240, 250, 0.1)`)
+- Button border: Ghost Border (`rgba(240, 240, 250, 0.35)`)
+- Overlay: `rgba(0, 0, 0, 0.5)`
 
 ### Example Component Prompts
-- "Create a hero section on black background. Headline at 36px NVIDIA-EMEA weight 700, line-height 1.25, color #ffffff. Subtitle at 18px weight 400, line-height 1.67, color #a7a7a7. CTA button with transparent background, 2px solid #76b900 border, 2px radius, 11px 13px padding, text #ffffff. Hover: background #1eaedb, text white."
-- "Design a product card: white background, 2px border-radius, box-shadow rgba(0,0,0,0.3) 0px 0px 5px. Title at 20px NVIDIA-EMEA weight 700, line-height 1.25, color #000000. Body at 15px weight 400, line-height 1.67, color #757575. Green underline accent on title: border-bottom 2px solid #76b900."
-- "Build a navigation bar: #000000 background, sticky top. NVIDIA logo left-aligned. Links at 14px NVIDIA-EMEA weight 700 uppercase, color #ffffff. Hover: color #3860be. Green-bordered CTA button right-aligned."
-- "Create a dark feature section: #000000 background. Section label at 14px weight 700 uppercase, color #76b900. Heading at 24px weight 700, color #ffffff. Description at 16px weight 400, color #a7a7a7. Three product cards in a row with 20px gap."
-- "Design a footer: #000000 background. Multi-column layout with link groups. Links at 14px weight 400, color #a7a7a7. Hover: color #76b900. Bottom bar with legal text at 12px, color #757575."
+- "Create a full-viewport hero: background-image covering 100vh, dark gradient overlay rgba(0,0,0,0.5). Headline at 48px D-DIN-Bold, uppercase, letter-spacing 0.96px, spectral white (#f0f0fa) text. Ghost CTA button: rgba(240,240,250,0.1) bg, 1px solid rgba(240,240,250,0.35) border, 32px radius, 18px padding."
+- "Design a navigation: transparent over photography. D-DIN 13px weight 700, uppercase, letter-spacing 1.17px, spectral white text. SpaceX wordmark left-aligned."
+- "Build a content section: full-viewport height, background photography with dark overlay. Left-aligned text block with 48px D-DIN-Bold uppercase heading, 16px D-DIN body text, and ghost button below."
+- "Create a micro label: D-DIN 10px, uppercase, letter-spacing 1px, spectral white, line-height 0.94."
 
 ### Iteration Guide
-1. Always use `#76b900` as accent, never as a background fill -- it's a signal color for borders, underlines, and highlights
-2. Buttons are transparent with green borders by default -- filled backgrounds appear only on hover/active states
-3. Weight 700 is the dominant voice for all interactive and heading elements; 400 is only for body paragraphs
-4. Border radius is 2px for everything -- this sharp, minimal rounding is core to the industrial aesthetic
-5. Dark sections use white text; light sections use black text -- green accent works identically on both
-6. Link hover is always `#3860be` (blue) regardless of the link's default color
-7. Line-height 1.25 for headings, 1.50-1.67 for body text -- maintain this contrast for visual hierarchy
-8. Navigation uses uppercase 14px bold -- this hardware-label typography is part of the brand voice
+1. Start with photography — the image IS the design
+2. All text is uppercase with positive letter-spacing — no exceptions
+3. Only two colors: black and spectral white (#f0f0fa)
+4. Ghost buttons are the only interactive element — transparent, spectral-bordered
+5. Zero shadows, zero cards, zero decorative elements
+6. Every section is full-viewport (100vh) — cinematic pacing

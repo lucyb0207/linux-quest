@@ -3,10 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>linux-quest</title>
+  <title>LinuxQuest — Learn Linux &amp; DevOps by Doing</title>
+  <meta name="description" content="Free, open source, hands-on Linux and DevOps practice scenarios. No login, no cost." />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+
+  <!-- ── Navigation ─────────────────────────────────────────────────── -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">LINUX<span class="accent">QUEST</span></a>
+      <div class="nav-links">
+        <a href="#standalone" class="nav-link">PRACTICE</a>
+        <a href="#tracks" class="nav-link">TRACKS</a>
+        <a href="https://github.com/HassanAbdullahHere/linux-quest"
+           class="nav-link" target="_blank" rel="noopener">GITHUB</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="#standalone" class="nav-mobile-link">PRACTICE</a>
+      <a href="#tracks" class="nav-mobile-link">TRACKS</a>
+      <a href="https://github.com/HassanAbdullahHere/linux-quest"
+         class="nav-mobile-link" target="_blank" rel="noopener">GITHUB</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-content">
+      <p class="hero-label animate" data-delay="0">FREE &amp; OPEN SOURCE</p>
+      <h1 class="hero-title animate" data-delay="100">
+        LEARN LINUX<br>BY ACTUALLY<br>USING IT.
+      </h1>
+      <p class="hero-sub animate" data-delay="200">
+        Real hands-on scenarios. No setup walls for standalones.<br>
+        No login. No cost. Just a terminal and something to fix.
+      </p>
+      <div class="hero-actions animate" data-delay="300">
+        <a href="#standalone" class="btn-ghost">START PRACTICING</a>
+        <a href="#tracks" class="btn-ghost-dim">VIEW TRACKS</a>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <span class="hero-scroll-label">SCROLL</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ── Stats Bar ──────────────────────────────────────────────────── -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat animate"><span class="stat-num" id="stat-scenarios">0</span><span class="stat-label">SCENARIOS</span></div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat animate"><span class="stat-num" id="stat-tracks">0</span><span class="stat-label">TRACKS</span></div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat animate"><span class="stat-num">FREE</span><span class="stat-label">FOREVER</span></div>
+    </div>
+  </div>
+
+  <!-- ── Standalone Scenarios ───────────────────────────────────────── -->
+  <section class="scene scene-standalone" id="standalone">
+    <div class="scene-inner">
+      <header class="scene-header animate">
+        <p class="scene-label">NO SETUP REQUIRED</p>
+        <h2 class="scene-title">STANDALONE SCENARIOS</h2>
+        <p class="scene-desc">Drop-in practice scenarios you can run in any Linux terminal. Each one is self-contained — set up, break, fix, repeat.</p>
+      </header>
+      <div id="standalone-grid" class="scenario-grid" aria-live="polite">
+        <p class="state-msg">LOADING SCENARIOS…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tracks ─────────────────────────────────────────────────────── -->
+  <section class="scene scene-tracks" id="tracks">
+    <div class="scene-inner">
+      <header class="scene-header animate">
+        <p class="scene-label">REQUIRES A VPS</p>
+        <h2 class="scene-title">TRACKS</h2>
+        <p class="scene-desc">Guided series that take you from zero to deployed on a real cloud server. Each track builds on the last.</p>
+      </header>
+
+      <!-- EC2 Setup Accordion -->
+      <details class="accordion animate">
+        <summary class="accordion-summary">
+          <span class="accordion-icon" aria-hidden="true"></span>
+          <span>SETTING UP YOUR AWS EC2 INSTANCE</span>
+        </summary>
+        <div class="accordion-body">
+          <p class="accordion-intro">
+            Tracks run on a real cloud VPS — an AWS EC2 instance.
+            The free tier is more than enough. Follow these two videos to get set up.
+          </p>
+          <div class="video-grid">
+            <div class="video-wrap">
+              <p class="video-label">01 — CREATE A FREE AWS ACCOUNT</p>
+              <div class="video-frame">
+                <!-- <iframe src="https://www.youtube.com/embed/VIDEO_ID_1"
+                  title="How to create a free AWS account" allowfullscreen></iframe> -->
+                <div class="video-placeholder">
+                  <span class="video-ph-title">HOW TO CREATE A FREE AWS ACCOUNT</span>
+                  <small class="video-ph-sub">YOUTUBE VIDEO COMING SOON</small>
+                </div>
+              </div>
+            </div>
+            <div class="video-wrap">
+              <p class="video-label">02 — LAUNCH AN EC2 AND SSH INTO IT</p>
+              <div class="video-frame">
+                <!-- <iframe src="https://www.youtube.com/embed/VIDEO_ID_2"
+                  title="How to launch an EC2 and SSH into it" allowfullscreen></iframe> -->
+                <div class="video-placeholder">
+                  <span class="video-ph-title">HOW TO LAUNCH AN EC2 AND SSH INTO IT</span>
+                  <small class="video-ph-sub">YOUTUBE VIDEO COMING SOON</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Tracks Grid -->
+      <div id="tracks-grid" class="tracks-grid" aria-live="polite">
+        <p class="state-msg">LOADING TRACKS…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <a href="index.html" class="nav-logo footer-logo">LINUX<span class="accent">QUEST</span></a>
+      <p class="footer-text">FREE AND OPEN SOURCE. NO LOGIN. NO COST.</p>
+      <a href="https://github.com/HassanAbdullahHere/linux-quest"
+         class="footer-link" target="_blank" rel="noopener">CONTRIBUTE ON GITHUB →</a>
+    </div>
+  </footer>
+
   <script src="assets/js/app.js"></script>
 </body>
 </html>

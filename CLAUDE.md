@@ -16,12 +16,15 @@ linuxquest/
 ├── CLAUDE.md
 ├── CLAUDE.local.md
 ├── .gitignore
-├── index.html
+├── index.html         → landing page
+├── scenario.html      → scenario detail page (reads ?id= and ?track= from URL)
 ├── README.md
 ├── CONTRIBUTING.md
 ├── assets/
 │   ├── css/style.css
-│   └── js/app.js
+│   └── js/
+│       ├── app.js         → landing page logic
+│       └── scenario.js    → scenario detail page logic
 └── scenarios/
     ├── index.json
     ├── standalone/
@@ -31,8 +34,12 @@ linuxquest/
 ## How scenarios load
 app.js fetches scenarios/index.json first, which is the master list 
 of all standalone scenarios and tracks. It then fetches each scenario 
-JSON file and renders them dynamically. No rebuild needed to add a 
-new scenario.
+JSON file and renders cards dynamically on the landing page.
+
+Clicking a card navigates to scenario.html?id={scenario-id} (and 
+optionally ?track={track-id} for series scenarios). scenario.js reads 
+URLSearchParams, fetches the correct JSON file, and renders the full 
+scenario detail view. No rebuild needed to add a new scenario.
 
 ## index.json structure
 {
@@ -114,11 +121,30 @@ User must be able to run rm -rf ~/linuxquest/ to clean everything up.
 Series scenarios are exempt as they run on a real VPS environment.
 
 ## UI sections
-1. Homepage — two sections: Standalone cards, Tracks as a visual path
-2. Scenario view — setup → problem → hints (reveal one at a time) →
-   commands → solution (hidden, toggle to reveal)
-3. Track view — shows ordered scenario path 01 → 02 → 03 with
-   progress via localStorage. Always show a skip prerequisites option.
+
+### index.html — Landing page
+1. Hero — headline, short description, no CTA wall
+2. Standalone section — grid of scenario cards, no setup required.
+   Each card click → scenario.html?id={id}
+3. Tracks section — preceded by a collapsible EC2 setup accordion
+   (collapsed by default). Accordion contains:
+   - Brief explanation: tracks run on a real cloud VPS (AWS EC2)
+   - Embedded YouTube video: "How to create a free AWS account"
+   - Embedded YouTube video: "How to launch an EC2 and SSH into it"
+   Below the accordion: visual path cards for each track.
+   Each track card click → scenario.html?id={first-scenario}&track={track-id}
+
+### scenario.html — Scenario detail page
+Reads ?id= and ?track= from URL params. Renders:
+  setup → problem → hints (reveal one at a time) →
+  commands → solution (hidden, toggle to reveal) →
+  Mark Complete button (writes to localStorage)
+Back button returns to index.html.
+
+### Track progress (in scenario.html)
+When ?track= is present, show a mini progress bar at the top:
+01 → 02 → [current] → 04 → 05
+with next/previous navigation between track scenarios.
 
 ## Progress tracking
 Uses localStorage only. No backend, no accounts.
