@@ -81,9 +81,17 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--spectral);
+  display: flex;
+  align-items: center;
 }
 
 .nav-logo .accent { color: var(--green); }
+
+.nav-logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
+}
 
 .nav-links {
   display: flex;
