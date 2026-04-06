@@ -48,13 +48,77 @@ function diffClass(d) {
 
 /* ── Copy command ────────────────────────────────────────────────────── */
 function copyCmd(btn, text) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = 'COPIED';
+  const onSuccess = () => {
+    const orig = btn.dataset.origText || btn.textContent;
+    btn.dataset.origText = orig;
+    btn.textContent = 'COPIED!';
     btn.classList.add('sp-copy-done');
-    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('sp-copy-done'); }, 1600);
-  }).catch(() => {
-    btn.textContent = 'COPY FAILED';
-    setTimeout(() => { btn.textContent = 'COPY'; }, 1600);
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.classList.remove('sp-copy-done');
+      delete btn.dataset.origText;
+    }, 1600);
+  };
+
+  const onFail = () => {
+    const orig = btn.dataset.origText || btn.textContent;
+    btn.dataset.origText = orig;
+    btn.textContent = 'FAILED';
+    setTimeout(() => {
+      btn.textContent = orig;
+      delete btn.dataset.origText;
+    }, 1600);
+  };
+
+  /* Reliable fallback: off-screen textarea + execCommand */
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, 99999); /* iOS */
+    try {
+      document.execCommand('copy') ? onSuccess() : onFail();
+    } catch (_) {
+      onFail();
+    }
+    document.body.removeChild(ta);
+  };
+
+  if (!navigator.clipboard) { fallback(); return; }
+  navigator.clipboard.writeText(text).then(onSuccess).catch(fallback);
+}
+
+/* ── Copy-button event delegation ────────────────────────────────────── */
+function initCopyDelegation() {
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+    const text = btn.dataset.copy;
+    if (text !== undefined) copyCmd(btn, text);
+  });
+}
+
+/* ── Scroll entrance animations ──────────────────────────────────────── */
+function initScrollAnimations() {
+  const els = document.querySelectorAll('.animate');
+  if (!els.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  els.forEach((el, i) => {
+    el.style.transitionDelay = `${i * 60}ms`;
+    observer.observe(el);
   });
 }
 
@@ -82,25 +146,35 @@ function renderHints(hints) {
     return;
   }
   let revealed = 0;
+
   function paint() {
-    container.innerHTML = '';
-    for (let i = 0; i < revealed; i++) {
+    const existing = container.querySelectorAll('.sp-hint-item').length;
+    if (existing === 0) container.innerHTML = '';
+
+    for (let i = existing; i < revealed; i++) {
       const div = document.createElement('div');
-      div.className = 'sp-hint-item';
+      div.className = 'sp-hint-item sp-hint-new';
       div.innerHTML =
         `<span class="sp-hint-num">HINT ${i + 1} OF ${hints.length}</span>` +
         `<p class="sp-hint-text">${escHtml(hints[i])}</p>`;
       container.appendChild(div);
+      requestAnimationFrame(() => div.classList.add('sp-hint-visible'));
     }
+
+    const oldBtn  = container.querySelector('.sp-hint-btn');
+    const oldDone = container.querySelector('.sp-hint-done');
+    if (oldBtn)  oldBtn.remove();
+    if (oldDone) oldDone.remove();
+
     if (revealed < hints.length) {
       const btn = document.createElement('button');
       btn.className = 'sp-hint-btn';
-      btn.textContent = `REVEAL HINT ${revealed + 1} OF ${hints.length}`;
+      btn.innerHTML = `<span class="sp-hint-btn-icon">💡</span> REVEAL HINT ${revealed + 1} OF ${hints.length}`;
       btn.addEventListener('click', () => { revealed++; paint(); });
       container.appendChild(btn);
     } else {
       const done = document.createElement('p');
-      done.className = 'sp-prose sp-muted';
+      done.className = 'sp-prose sp-muted sp-hint-done';
       done.textContent = 'All hints revealed.';
       container.appendChild(done);
     }
@@ -108,16 +182,123 @@ function renderHints(hints) {
   paint();
 }
 
+/* ── Solution ────────────────────────────────────────────────────────── */
+function renderSolution(text) {
+  const container = document.getElementById('sp-solution');
+  if (!text) {
+    container.innerHTML = '<p class="sp-prose sp-muted">No solution provided.</p>';
+    return;
+  }
+
+  /* Parse numbered steps: lines starting with "N." or "N)" */
+  const rawLines = text.split('\n');
+  const steps = [];
+  let current = null;
+
+  for (const line of rawLines) {
+    const match = line.match(/^(\d+)[.)]\s+([\s\S]*)/);
+    if (match) {
+      if (current) steps.push(current);
+      current = { num: match[1], lines: [match[2]] };
+    } else if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) steps.push(current);
+
+  if (steps.length === 0) {
+    /* Fallback: no numbered steps found — render as single code block */
+    const trimmed = text.trim();
+    container.innerHTML =
+      `<div class="sp-step-cmd">
+        <code class="sp-step-code">${escHtml(trimmed)}</code>
+        <button class="sp-copy-btn" data-copy="${escHtml(trimmed)}">COPY</button>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = steps.map(step => {
+    const firstLine = step.lines[0] || '';
+
+    /*
+     * Determine if the first line is a description label:
+     * it ends with ":" AND there are more non-empty lines after it.
+     */
+    const restLines = step.lines.slice(1).map(l => l.trim()).filter(Boolean);
+    const hasLabel  = firstLine.trimEnd().endsWith(':') && restLines.length > 0;
+
+    let labelHtml = '';
+    let cmdLines  = [];
+
+    if (hasLabel) {
+      /* First line is a human-readable label; rest are commands */
+      labelHtml = `<p class="sp-step-label">${escHtml(firstLine.trim())}</p>`;
+      cmdLines  = restLines;
+    } else {
+      /* All non-empty lines (including first) are commands */
+      cmdLines = [firstLine.trim(), ...restLines].filter(Boolean);
+    }
+
+    const cmdsHtml = cmdLines.map(cmd => {
+      /* Lines starting with "# " are step explanations, not commands */
+      if (cmd.startsWith('# ')) {
+        return `<p class="sp-step-explanation">${escHtml(cmd.slice(2).trim())}</p>`;
+      }
+
+      /*
+       * Split "Label:   command" on the first colon followed by 2+ spaces.
+       * This separates display labels from the copyable command without
+       * touching colons inside paths (/home/user/.ssh) or port maps (8080:8080).
+       */
+      const split = cmd.match(/^([^:]+):\s{2,}(.+)$/);
+      const label = split ? split[1].trim() : null;
+      const command = split ? split[2].trim() : cmd.trim();
+      const labelHtml = label
+        ? `<span class="sp-step-cmd-label">${escHtml(label)}</span>`
+        : '';
+      return `<div class="sp-step-cmd">
+        ${labelHtml}
+        <code class="sp-step-code">${escHtml(command)}</code>
+        <button class="sp-copy-btn" data-copy="${escHtml(command)}">COPY</button>
+      </div>`;
+    }).join('');
+
+    return `<div class="sp-step">
+      <span class="sp-step-num">${escHtml(step.num)}</span>
+      <div class="sp-step-content">
+        ${labelHtml}
+        <div class="sp-step-cmds">${cmdsHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 /* ── Solution toggle ─────────────────────────────────────────────────── */
-function initSolutionToggle() {
-  const btn = document.getElementById('sp-solution-toggle');
-  const pre = document.getElementById('sp-solution');
+function initSolutionToggle(solutionText) {
+  const btn     = document.getElementById('sp-solution-toggle');
+  const wrap    = document.getElementById('sp-solution');
+  const copyAll = document.getElementById('sp-copy-all-btn');
+
   btn.addEventListener('click', () => {
-    const showing = !pre.hidden;
-    pre.hidden = showing;
-    btn.textContent = showing ? 'SHOW SOLUTION' : 'HIDE SOLUTION';
-    btn.classList.toggle('sp-toggle-active', !showing);
+    const showing = !wrap.hidden;
+    if (showing) {
+      wrap.classList.remove('sp-solution-open');
+      setTimeout(() => { wrap.hidden = true; }, 300);
+      btn.innerHTML = '<span class="sp-toggle-icon">▶</span> SHOW SOLUTION';
+      btn.classList.remove('sp-toggle-active');
+      if (copyAll) copyAll.hidden = true;
+    } else {
+      wrap.hidden = false;
+      requestAnimationFrame(() => wrap.classList.add('sp-solution-open'));
+      btn.innerHTML = '<span class="sp-toggle-icon sp-toggle-icon-open">▼</span> HIDE SOLUTION';
+      btn.classList.add('sp-toggle-active');
+      if (copyAll) copyAll.hidden = false;
+    }
   });
+
+  if (copyAll && solutionText) {
+    copyAll.dataset.copy = solutionText;
+  }
 }
 
 /* ── Mark complete ───────────────────────────────────────────────────── */
@@ -137,7 +318,6 @@ function initCompleteBtn(id, trackScenarios) {
     if (trackScenarios) renderTrackProgress(trackScenarios, id);
   });
 }
-
 
 /* ── Render ──────────────────────────────────────────────────────────── */
 function renderScenario(scenario, trackId, trackScenarios) {
@@ -162,7 +342,7 @@ function renderScenario(scenario, trackId, trackScenarios) {
     document.getElementById('sp-setup-cmds').innerHTML = setup.commands.map(cmd =>
       `<div class="sp-cmd">
         <code class="sp-cmd-code">${escHtml(cmd)}</code>
-        <button class="sp-copy-btn" onclick="copyCmd(this, ${JSON.stringify(cmd)})">COPY</button>
+        <button class="sp-copy-btn" data-copy="${escHtml(cmd)}">COPY</button>
       </div>`
     ).join('');
   }
@@ -178,9 +358,6 @@ function renderScenario(scenario, trackId, trackScenarios) {
   /* Problem */
   document.getElementById('sp-problem').textContent = scenario.problem || '';
 
-  /* Hints */
-  renderHints(scenario.hints || []);
-
   /* Commands */
   const cmds = scenario.commands || [];
   if (cmds.length) {
@@ -190,8 +367,11 @@ function renderScenario(scenario, trackId, trackScenarios) {
     document.getElementById('sp-cmds-section').hidden = true;
   }
 
+  /* Hints */
+  renderHints(scenario.hints || []);
+
   /* Solution */
-  document.getElementById('sp-solution').textContent = scenario.solution || '';
+  renderSolution(scenario.solution || '');
 
   /* Complete state */
   updateCompleteBtn(scenario.id);
@@ -217,7 +397,7 @@ function renderScenario(scenario, trackId, trackScenarios) {
 /* ── Bootstrap ───────────────────────────────────────────────────────── */
 async function init() {
   initNav();
-  initSolutionToggle();
+  initCopyDelegation();
 
   const params  = new URLSearchParams(location.search);
   const id      = params.get('id');
@@ -244,7 +424,9 @@ async function init() {
     const scenario = await loadScenario(id, trackId);
     document.getElementById('sp-loading').hidden = true;
     renderScenario(scenario, trackId, trackScenarios);
+    initSolutionToggle(scenario.solution || '');
     initCompleteBtn(scenario.id, trackScenarios);
+    initScrollAnimations();
 
   } catch (err) {
     document.getElementById('sp-loading').hidden = true;

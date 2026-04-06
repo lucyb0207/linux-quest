@@ -58,7 +58,7 @@
         </header>
 
         <!-- 01 — The Problem -->
-        <section class="sp-section">
+        <section class="sp-section animate">
           <p class="sp-section-label">01 — THE PROBLEM</p>
           <div class="sp-section-body">
             <p class="sp-problem" id="sp-problem"></p>
@@ -66,7 +66,7 @@
         </section>
 
         <!-- 02 — Useful Commands -->
-        <section class="sp-section" id="sp-cmds-section">
+        <section class="sp-section animate" id="sp-cmds-section">
           <p class="sp-section-label">02 — USEFUL COMMANDS</p>
           <div class="sp-section-body">
             <div id="sp-commands" class="sp-tags"></div>
@@ -74,7 +74,7 @@
         </section>
 
         <!-- 03 — Setup -->
-        <section class="sp-section" id="sp-setup-section">
+        <section class="sp-section animate" id="sp-setup-section">
           <p class="sp-section-label">03 — SETUP</p>
           <div class="sp-section-body">
             <p class="sp-prose" id="sp-setup-desc"></p>
@@ -85,7 +85,7 @@
         </section>
 
         <!-- 04 — Hints -->
-        <section class="sp-section">
+        <section class="sp-section animate">
           <p class="sp-section-label">04 — HINTS</p>
           <div class="sp-section-body">
             <div id="sp-hints" class="sp-hints"></div>
@@ -93,11 +93,16 @@
         </section>
 
         <!-- 05 — Solution -->
-        <section class="sp-section">
+        <section class="sp-section animate">
           <p class="sp-section-label">05 — SOLUTION</p>
           <div class="sp-section-body">
-            <button class="sp-toggle" id="sp-solution-toggle">SHOW SOLUTION</button>
-            <pre class="sp-solution" id="sp-solution" hidden></pre>
+            <div class="sp-solution-header">
+              <button class="sp-toggle" id="sp-solution-toggle">
+                <span class="sp-toggle-icon">▶</span> SHOW SOLUTION
+              </button>
+              <button class="sp-copy-all-btn" id="sp-copy-all-btn" hidden>COPY ALL</button>
+            </div>
+            <div class="sp-solution-wrap" id="sp-solution" hidden></div>
           </div>
         </section>
 

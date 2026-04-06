@@ -21,6 +21,9 @@
 /* ── Reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Ensure [hidden] always wins over display:flex/grid/block rules */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -938,9 +941,9 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-inner {
-  max-width: 860px;
+  max-width: 1100px;
   margin-inline: auto;
-  padding: 48px 64px 96px;
+  padding: 48px 72px 96px;
 }
 
 /* Top bar */
@@ -954,9 +957,9 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-back {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--muted);
   display: flex;
@@ -976,7 +979,7 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .tp-step {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--faint);
@@ -1040,7 +1043,7 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-section-label {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1056,16 +1059,16 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 /* Text styles */
 .sp-prose {
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 17px;
+  line-height: 1.8;
   color: var(--muted);
 }
 
 .sp-muted { color: var(--faint); }
 
 .sp-note {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--muted);
   background: rgba(118,185,0,0.06);
   border-left: 2px solid var(--green);
@@ -1074,8 +1077,8 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-problem {
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 19px;
+  line-height: 1.8;
   color: var(--spectral);
 }
 
@@ -1099,30 +1102,30 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 .sp-cmd-code {
   font-family: monospace;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--spectral);
   word-break: break-all;
   flex: 1;
 }
 
 .sp-copy-btn {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--muted);
   background: none;
   border: 1px solid var(--ghost-border);
-  border-radius: 2px;
-  padding: 4px 10px;
+  border-radius: 4px;
+  padding: 6px 14px;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: color 0.2s, border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
-.sp-copy-btn:hover { color: var(--spectral); border-color: rgba(240,240,250,0.4); }
-.sp-copy-btn.sp-copy-done { color: var(--green); border-color: rgba(118,185,0,0.4); }
+.sp-copy-btn:hover { color: var(--spectral); border-color: rgba(240,240,250,0.4); background: rgba(240,240,250,0.06); }
+.sp-copy-btn.sp-copy-done { color: var(--green); border-color: rgba(118,185,0,0.5); background: rgba(118,185,0,0.08); }
 
 /* Hints */
 .sp-hints {
@@ -1132,9 +1135,9 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-hint-btn {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
   background: var(--ghost-bg);
@@ -1161,9 +1164,9 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-hint-num {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--green-dim);
   display: block;
@@ -1171,8 +1174,8 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-hint-text {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.8;
   color: var(--muted);
 }
 
@@ -1185,24 +1188,26 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 .sp-tags .tag,
 .sp-meta-tags .tag {
+  font-size: 14px;
   color: var(--spectral);
   border-color: rgba(240,240,250,0.3);
   background: rgba(240,240,250,0.07);
   font-family: monospace;
   letter-spacing: 0.5px;
+  padding: 5px 12px;
 }
 
 /* Solution */
 .sp-toggle {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
   background: var(--ghost-bg);
   border: 1px solid var(--ghost-border);
   border-radius: 32px;
-  padding: 12px 24px;
+  padding: 14px 28px;
   cursor: pointer;
   align-self: flex-start;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
@@ -1243,15 +1248,15 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-complete-btn {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--spectral);
   background: rgba(118,185,0,0.12);
   border: 1px solid rgba(118,185,0,0.35);
   border-radius: 32px;
-  padding: 14px 32px;
+  padding: 16px 36px;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
@@ -1268,9 +1273,9 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 }
 
 .sp-reset-btn {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--faint);
   background: none;
@@ -1308,6 +1313,192 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 .sp-nav-disabled { color: var(--faint); cursor: default; pointer-events: none; }
 
+/* ── Solution steps ─────────────────────────────────────────────────── */
+.sp-solution-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sp-toggle-icon {
+  font-style: normal;
+  display: inline-block;
+  transition: transform 0.25s ease;
+  font-size: 12px;
+}
+
+.sp-toggle-icon-open {
+  transform: rotate(0deg);
+}
+
+.sp-copy-all-btn {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--ghost-border);
+  border-radius: 32px;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.sp-copy-all-btn:hover {
+  color: var(--spectral);
+  border-color: rgba(240,240,250,0.4);
+  background: rgba(240,240,250,0.06);
+}
+
+.sp-copy-all-btn.sp-copy-done {
+  color: var(--green);
+  border-color: rgba(118,185,0,0.4);
+}
+
+/* Solution reveal animation */
+@keyframes sp-reveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sp-solution-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sp-solution-wrap.sp-solution-open {
+  animation: sp-reveal 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Numbered step */
+.sp-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background: rgba(240,240,250,0.03);
+  border: 1px solid var(--ghost-border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.sp-step:hover {
+  border-color: rgba(240,240,250,0.18);
+  background: rgba(240,240,250,0.05);
+}
+
+.sp-step-note {
+  font-size: 15px;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.sp-step-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(118,185,0,0.12);
+  border: 1px solid rgba(118,185,0,0.35);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Content area to the right of the number badge */
+.sp-step-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Optional description label above commands */
+.sp-step-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Stack of individual command rows */
+.sp-step-cmds {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Explanation text below a command block */
+.sp-step-explanation {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 2px;
+  padding-left: 2px;
+  opacity: 0.85;
+}
+
+/* Single command row: code + copy button side by side */
+.sp-step-cmd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(240,240,250,0.1);
+  border-radius: 5px;
+  padding: 10px 14px;
+}
+
+/* Inline label before the command (e.g. "OS info") */
+.sp-step-cmd-label {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.sp-step-code {
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--spectral);
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* Hint animations */
+@keyframes sp-hint-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sp-hint-new {
+  opacity: 0;
+}
+
+.sp-hint-new.sp-hint-visible {
+  animation: sp-hint-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.sp-hint-btn-icon {
+  margin-right: 6px;
+}
+
 /* ── Scenario page responsive ────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .sp-inner { padding: 40px 40px 72px; }
@@ -1321,5 +1512,8 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 @media (max-width: 480px) {
   .sp-cmd { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .sp-step { gap: 10px; }
+  .sp-step-cmd { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .sp-step-cmd .sp-copy-btn { align-self: flex-end; }
   .sp-copy-btn { align-self: flex-end; }
 }
