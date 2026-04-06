@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinuxQuest — Scenario</title>
+  <meta name="description" content="Hands-on Linux practice scenario." />
+  <link rel="icon" type="image/svg+xml" href="assets/linuxquest_logo.svg" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Navigation ─────────────────────────────────────────────────── -->
+  <nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/linuxquest_logo.svg" alt="LinuxQuest" class="nav-logo-img" />
+      </a>
+      <div class="nav-links">
+        <a href="index.html#standalone" class="nav-link">PRACTICE</a>
+        <a href="index.html#tracks" class="nav-link">TRACKS</a>
+        <a href="https://github.com/HassanAbdullahHere/linux-quest"
+           class="nav-link" target="_blank" rel="noopener">GITHUB</a>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="index.html#standalone" class="nav-mobile-link">PRACTICE</a>
+      <a href="index.html#tracks" class="nav-mobile-link">TRACKS</a>
+      <a href="https://github.com/HassanAbdullahHere/linux-quest"
+         class="nav-mobile-link" target="_blank" rel="noopener">GITHUB</a>
+    </div>
+  </nav>
+
+  <!-- ── Scenario Main ──────────────────────────────────────────────── -->
+  <main class="sp-main">
+    <div class="sp-inner">
+
+      <!-- Top bar: back + track progress -->
+      <div class="sp-topbar">
+        <a href="index.html" class="sp-back">← SCENARIOS</a>
+        <div id="track-nav" hidden></div>
+      </div>
+
+      <!-- States -->
+      <p class="state-msg" id="sp-loading">LOADING SCENARIO…</p>
+      <p class="state-msg" id="sp-error" hidden>SCENARIO NOT FOUND.</p>
+
+      <!-- Scenario body (injected) -->
+      <div id="sp-body" hidden>
+
+        <!-- Header -->
+        <header class="sp-header">
+          <div class="sp-header-meta" id="sp-meta"></div>
+          <h1 class="sp-title" id="sp-title"></h1>
+        </header>
+
+        <!-- 01 — The Problem -->
+        <section class="sp-section">
+          <p class="sp-section-label">01 — THE PROBLEM</p>
+          <div class="sp-section-body">
+            <p class="sp-problem" id="sp-problem"></p>
+          </div>
+        </section>
+
+        <!-- 02 — Useful Commands -->
+        <section class="sp-section" id="sp-cmds-section">
+          <p class="sp-section-label">02 — USEFUL COMMANDS</p>
+          <div class="sp-section-body">
+            <div id="sp-commands" class="sp-tags"></div>
+          </div>
+        </section>
+
+        <!-- 03 — Setup -->
+        <section class="sp-section" id="sp-setup-section">
+          <p class="sp-section-label">03 — SETUP</p>
+          <div class="sp-section-body">
+            <p class="sp-prose" id="sp-setup-desc"></p>
+            <div id="sp-setup-cmds" class="sp-cmd-list"></div>
+            <p class="sp-note" id="sp-setup-note" hidden></p>
+            <p class="sp-prose sp-muted" id="sp-setup-verify" hidden></p>
+          </div>
+        </section>
+
+        <!-- 04 — Hints -->
+        <section class="sp-section">
+          <p class="sp-section-label">04 — HINTS</p>
+          <div class="sp-section-body">
+            <div id="sp-hints" class="sp-hints"></div>
+          </div>
+        </section>
+
+        <!-- 05 — Solution -->
+        <section class="sp-section">
+          <p class="sp-section-label">05 — SOLUTION</p>
+          <div class="sp-section-body">
+            <button class="sp-toggle" id="sp-solution-toggle">SHOW SOLUTION</button>
+            <pre class="sp-solution" id="sp-solution" hidden></pre>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="sp-actions">
+          <button class="sp-complete-btn" id="sp-complete-btn">MARK COMPLETE</button>
+          <button class="sp-reset-btn" id="sp-reset-btn" hidden>RESET TRACK</button>
+        </div>
+
+      </div><!-- /sp-body -->
+    </div><!-- /sp-inner -->
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <a href="index.html" class="nav-logo footer-logo">
+        <img src="assets/linuxquest_logo.svg" alt="LinuxQuest" class="nav-logo-img" />
+      </a>
+      <p class="footer-text">FREE AND OPEN SOURCE. NO LOGIN. NO COST.</p>
+      <a href="https://github.com/HassanAbdullahHere/linux-quest"
+         class="footer-link" target="_blank" rel="noopener">CONTRIBUTE ON GITHUB →</a>
+    </div>
+  </footer>
+
+  <script src="assets/js/scenario.js"></script>
+</body>
+</html>
