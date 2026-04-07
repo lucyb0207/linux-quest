@@ -1,0 +1,24 @@
+{
+  "id": "kill-hungry-process",
+  "title": "Something is eating your server",
+  "type": "standalone",
+  "difficulty": "intermediate",
+  "tags": ["processes", "troubleshooting", "performance", "signals"],
+  "problem": "Your server is sluggish. Someone on the team accidentally left a script running in the background and it is hammering the CPU. Find the process, investigate it, and kill it cleanly. If it does not die, force it.",
+  "setup": {
+    "description": "Spawn fake CPU-hungry background processes to simulate the problem.",
+    "commands": [
+      "yes > /dev/null &",
+      "yes > /dev/null &",
+      "yes > /dev/null &"
+    ],
+    "note": "These will spike your CPU. They are harmless and gone the moment you kill them or close the terminal."
+  },
+  "hints": [
+    "top or htop will show you what is eating CPU in real time — sort by CPU column and look for the culprit",
+    "Once you spot it, use ps aux | grep yes to find all instances and get their PIDs",
+    "kill PID sends a graceful signal — if the process ignores it, kill -9 PID forces it. Kill all instances with pkill yes"
+  ],
+  "commands": ["top", "htop", "ps", "kill", "pkill", "grep"],
+  "solution": "1. See what is running:   top  or  htop  # real time process viewer\n2. Sort by CPU:           press P inside top  # P sorts by CPU, M sorts by memory\n3. Find all instances:    ps aux | grep yes  # aux shows all processes, grep filters by name\n4. Kill one by PID:       kill <PID>  # sends SIGTERM, asks process to stop gracefully\n5. Kill all at once:      pkill yes  # kills all processes matching the name\n6. Force kill if needed:  kill -9 <PID>  # SIGKILL, cannot be ignored by the process\n7. Confirm they are gone: ps aux | grep yes  # should return nothing or just the grep itself"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "disk-almost-full",
+  "title": "Disk is at 95%, fix it before it kills the server",
+  "type": "standalone",
+  "difficulty": "intermediate",
+  "tags": ["disk", "troubleshooting", "logs", "cleanup"],
+  "problem": "You get a alert at 2am — disk is at 95%. The server will stop accepting writes if it hits 100% and the app will crash. Find what is eating the disk, clean it up and get usage back under 70%.",
+  "setup": {
+    "description": "Create fake large files to simulate a disk space problem.",
+    "commands": [
+      "mkdir -p ~/disklab/logs/app",
+      "dd if=/dev/zero of=~/disklab/logs/app/app.log bs=1M count=200",
+      "dd if=/dev/zero of=~/disklab/logs/app/error.log bs=1M count=150",
+      "dd if=/dev/zero of=~/disklab/logs/app/debug.log bs=1M count=100"
+    ],
+    "note": "This creates 450MB of fake log files. Safe to delete entirely after the scenario."
+  },
+  "hints": [
+    "Start broad then narrow down — df -h shows disk usage by partition, du -h narrows it to directories",
+    "du -sh /* 2>/dev/null will show you the biggest directories at root level — follow the largest one down",
+    "Large log files are the most common culprit — find / -name '*.log' -size +50M 2>/dev/null to hunt them down"
+  ],
+  "commands": ["df", "du", "find", "rm", "truncate", "ls"],
+  "solution": "1. Check overall disk:       df -h  # shows all partitions and usage percentage\n2. Find biggest dirs:        du -sh ~/* 2>/dev/null | sort -rh  # sort by size, biggest first\n3. Drill into disklab:       du -sh ~/disklab/logs/app/*  # see which log files are largest\n4. Hunt large log files:     find ~/disklab -name '*.log' -size +50M  # find logs over 50MB\n5. Delete old logs:          rm ~/disklab/logs/app/debug.log  # remove the biggest offenders\n6. Truncate live log:        truncate -s 0 ~/disklab/logs/app/app.log  # empty without deleting, safe for active logs\n7. Confirm cleanup:          df -h  # verify usage has dropped"
+}
