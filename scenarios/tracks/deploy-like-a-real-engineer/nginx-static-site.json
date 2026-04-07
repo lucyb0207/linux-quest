@@ -1,0 +1,31 @@
+{
+  "id": "nginx-static-site",
+  "title": "Serve your first static site with nginx",
+  "type": "series",
+  "difficulty": "beginner",
+  "tags": ["nginx", "web-server", "static", "html"],
+  "series": {
+    "track_id": "deploy-like-a-real-engineer",
+    "track_title": "Deploy like a real engineer",
+    "order": 1,
+    "requires": [],
+    "requires_description": "",
+    "environment": "vps"
+  },
+  "problem": "You have a fresh Amazon Linux VPS. Nothing is running on it. Install nginx, deploy a simple HTML page and make it publicly accessible on port 80. This is the foundation everything else in this track builds on.",
+  "setup": {
+    "description": "Check your VPS is ready before starting.",
+    "commands": [
+      "cat /etc/os-release",
+      "curl -I http://localhost"
+    ],
+    "note": "First command confirms you are on Amazon Linux. Second command should fail — meaning port 80 is clear and nothing is running yet. Also make sure port 80 is open in your EC2 Security Group before starting."
+  },
+  "hints": [
+    "Amazon Linux uses yum — sudo yum install nginx. After install nginx does not start automatically, you need to start and enable it manually with systemctl",
+    "nginx serves files from /usr/share/nginx/html on Amazon Linux — this is different from Ubuntu which uses /var/www/html",
+    "If port 80 is not reachable from outside, go to your EC2 console → Security Groups → Inbound Rules → Add Rule → HTTP port 80 → Source 0.0.0.0/0"
+  ],
+  "commands": ["yum", "systemctl", "nginx", "curl", "nano"],
+  "solution": "1. Update packages:\n   sudo yum update -y\n   # Always update before installing anything.\n2. Install nginx:\n   sudo yum install nginx -y\n   # Pulls nginx from the Amazon Linux yum repos.\n3. Start nginx:\n   sudo systemctl start nginx\n   # Starts the service immediately.\n4. Enable on boot:\n   sudo systemctl enable nginx\n   # Ensures nginx restarts automatically after a reboot.\n5. Check status:\n   sudo systemctl status nginx\n   # Confirm it shows 'active (running)'.\n6. Test locally:\n   curl -I http://localhost\n   # Should return HTTP/1.1 200 OK.\n7. Create your page:\n   sudo nano /usr/share/nginx/html/index.html\n   # Amazon Linux serves from here — Ubuntu uses /var/www/html.\n8. Set permissions:\n   sudo chmod 644 /usr/share/nginx/html/index.html\n   # nginx needs read access to serve the file.\n9. Reload nginx:\n   sudo systemctl reload nginx\n   # Applies config/content changes without dropping connections.\n10. Test from outside:\n   curl -I http://YOUR_EC2_IP\n   # Run this from your local machine or browser.\n11. If not reachable:\n   # EC2 Console → Security Groups → Inbound Rules → Add Rule → HTTP port 80 → Source 0.0.0.0/0"
+}

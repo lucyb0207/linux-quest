@@ -1,4 +1,14 @@
 {
   "standalone": ["explore-new-server", "create-dev-user-ssh", "kill-hungry-process", "disk-almost-full", "server-breach-audit"],
-  "tracks": []
+  "tracks": [
+    {
+      "id": "deploy-like-a-real-engineer",
+      "title": "Deploy like a real engineer",
+      "description": "Go from a blank VPS to a deployed Node app with nginx, firewall and environment config.",
+      "environment": "vps",
+      "scenarios": [
+        "nginx-static-site"
+      ]
+    }
+  ]
 }

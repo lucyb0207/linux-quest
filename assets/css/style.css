@@ -743,51 +743,64 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
 
 /* ── Tracks Grid ─────────────────────────────────────────────────────── */
 .tracks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 16px;
-}
-
-.track-card {
-  background: rgba(3,3,3,0.9);
-  border: 1px solid var(--ghost-border);
-  border-radius: 6px;
-  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  cursor: pointer;
-  transition: background 0.3s, border-color 0.3s,
-              transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-              box-shadow 0.3s;
-  position: relative;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
+  gap: 64px;
 }
 
-.track-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--green), transparent);
-  transform: scaleX(0);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+/* ── Track Block ─────────────────────────────────────────────────────── */
+.track-block { width: 100%; }
+
+/* Track header bar */
+.track-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 32px 36px;
+  background: rgba(118, 185, 0, 0.04);
+  border: 1px solid rgba(118, 185, 0, 0.2);
+  border-bottom: none;
 }
 
-.track-card:hover {
-  background: rgba(240, 240, 250, 0.03);
-  border-color: rgba(240,240,250,0.3);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(118,185,0,0.1);
+.track-bar-left { flex: 1; min-width: 0; }
+
+.track-env-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 10px;
 }
 
-.track-card:hover::after { transform: scaleX(1); }
+.track-bar-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--spectral);
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
 
-.track-env {
+.track-bar-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.track-bar-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.track-bar-progress-label {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -795,52 +808,143 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
   color: var(--green);
 }
 
-.track-title {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--spectral);
-  line-height: 1.15;
+.track-bar-progress {
+  width: 180px;
+  height: 2px;
+  background: var(--ghost-border);
 }
 
-.track-desc {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.67;
-  color: var(--muted);
+.track-bar-progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.track-bar-cta {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--spectral);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.track-bar-cta:hover { color: var(--green); }
+.track-bar-cta .arrow { display: inline-block; transition: transform 0.2s; }
+.track-bar-cta:hover .arrow { transform: translateX(4px); }
+
+/* ── Scenario Cards Grid ─────────────────────────────────────────────── */
+.tsc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  border: 1px solid rgba(118, 185, 0, 0.2);
+}
+
+.tsc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-right: 1px solid var(--ghost-border);
+  border-bottom: 1px solid var(--ghost-border);
+  transition: background 0.25s;
+  position: relative;
+  color: inherit;
+}
+
+a.tsc-card { text-decoration: none; cursor: pointer; }
+a.tsc-card:hover { background: var(--ghost-bg); }
+
+.tsc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tsc-num {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ghost-border);
+  line-height: 1;
+}
+
+.tsc-status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.tsc-status-done    { color: var(--green); }
+.tsc-status-current { color: var(--spectral); }
+.tsc-status-locked  { color: var(--faint); }
+
+.tsc-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--spectral);
+  line-height: 1.4;
   flex: 1;
 }
 
-/* Track step path */
-.track-path {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+.tsc-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
-.track-step {
-  font-size: 9px;
+.tsc-cta {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: auto;
+  transition: color 0.2s;
+}
+a.tsc-card:hover .tsc-cta { color: var(--green); }
+.tsc-cta .arrow { display: inline-block; transition: transform 0.2s; }
+a.tsc-card:hover .tsc-cta .arrow { transform: translateX(4px); }
+
+/* State variants */
+.tsc-done .tsc-num   { color: rgba(118, 185, 0, 0.35); }
+.tsc-current .tsc-num { color: rgba(240, 240, 250, 0.35); }
+
+.tsc-current {
+  background: rgba(240, 240, 250, 0.02);
+}
+.tsc-current::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--green);
+}
+
+.tsc-locked {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.tsc-skip-btn {
+  background: none;
+  border: none;
+  color: var(--faint);
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: var(--faint);
-  border: 1px solid var(--ghost-border);
-  padding: 3px 8px;
-}
-
-.track-step-arrow {
-  font-size: 10px;
-  color: var(--ghost-border);
-}
-
-.track-count {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--faint);
+  cursor: pointer;
+  padding: 0;
+  margin-top: auto;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
 }
+.tsc-skip-btn:hover { color: var(--spectral); }
 
 /* ── Footer ─────────────────────────────────────────────────────────── */
 .footer {
@@ -925,7 +1029,10 @@ details[open] .accordion-icon::after { transform: translate(-50%, -50%) rotate(9
   .accordion-body { padding: 20px; }
 
   .scenario-grid { grid-template-columns: 1fr; }
-  .tracks-grid { grid-template-columns: 1fr; }
+  .tsc-grid { grid-template-columns: 1fr; }
+  .track-bar { flex-direction: column; gap: 24px; }
+  .track-bar-right { align-items: flex-start; }
+  .track-bar-progress { width: 100%; }
 }
 
 @media (max-width: 480px) {

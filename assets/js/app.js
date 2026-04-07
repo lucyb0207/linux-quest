@@ -160,6 +160,14 @@ function renderTags(tags) {
   return `<div class="card-tags">${tags.map(t => `<span class="tag">${t.toUpperCase()}</span>`).join('')}</div>`;
 }
 
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 /* ── Scenario Card ───────────────────────────────────────────────────── */
 function buildScenarioCard(scenario) {
   const done = localStorage.getItem(`completed:${scenario.id}`) === 'true';
@@ -178,45 +186,6 @@ function buildScenarioCard(scenario) {
       <p class="card-desc">${truncate(scenario.problem, 130)}</p>
       ${renderTags(scenario.tags)}
       <span class="card-cta">PRACTICE <span class="arrow">→</span></span>
-    </a>
-  `;
-}
-
-/* ── Track Path ──────────────────────────────────────────────────────── */
-function buildTrackPath(ids) {
-  if (!Array.isArray(ids) || ids.length === 0) return '';
-  const visible = ids.slice(0, 5);
-  const steps = visible.map((_id, i) =>
-    `<span class="track-step">${String(i + 1).padStart(2, '0')}</span>` +
-    (i < visible.length - 1 ? '<span class="track-step-arrow">›</span>' : '')
-  ).join('');
-  const more = ids.length > 5
-    ? '<span class="track-step-arrow">›</span><span class="track-step">…</span>'
-    : '';
-  return `<div class="track-path">${steps}${more}</div>`;
-}
-
-/* ── Track Card ──────────────────────────────────────────────────────── */
-function buildTrackCard(track) {
-  const ids   = Array.isArray(track.scenarios) ? track.scenarios : [];
-  const first = ids[0] || '';
-  const href  = first
-    ? `scenario.html?id=${encodeURIComponent(first)}&track=${encodeURIComponent(track.id)}`
-    : '#tracks';
-  const count = ids.length;
-  const env   = (track.environment || '').toUpperCase();
-
-  return `
-    <a class="track-card animate" href="${href}">
-      ${env ? `<span class="track-env">${env} ENVIRONMENT</span>` : ''}
-      <div class="card-header">
-        <h3 class="track-title">${(track.title || track.id).toUpperCase()}</h3>
-        <span class="card-prompt" aria-hidden="true">&gt;_</span>
-      </div>
-      <p class="track-desc">${truncate(track.description, 150)}</p>
-      ${buildTrackPath(ids)}
-      <p class="track-count">${count} SCENARIO${count !== 1 ? 'S' : ''}</p>
-      <span class="card-cta">START TRACK <span class="arrow">→</span></span>
     </a>
   `;
 }
@@ -254,8 +223,119 @@ async function renderStandalone(ids) {
   });
 }
 
+/* ── Track Block ─────────────────────────────────────────────────────── */
+let _enrichedTracks = [];
+
+function buildTrackBlock(track) {
+  const scenarios = track.scenarioData || [];
+  const total     = scenarios.length;
+  const completed = scenarios.filter(s => localStorage.getItem(`completed:${s.id}`) === 'true').length;
+  const pct       = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const env       = (track.environment || '').toUpperCase();
+
+  /* Header CTA — links to next unlocked or first */
+  const nextIdx  = scenarios.findIndex(s => localStorage.getItem(`completed:${s.id}`) !== 'true');
+  const ctaId    = nextIdx >= 0 ? scenarios[nextIdx].id : (scenarios[0] || {}).id || '';
+  const ctaHref  = ctaId ? `scenario.html?id=${encodeURIComponent(ctaId)}&track=${encodeURIComponent(track.id)}` : '#tracks';
+  const ctaLabel = completed === 0 ? 'START TRACK' : completed === total ? '✓ COMPLETED — REVISIT' : 'CONTINUE';
+
+  const cards = scenarios.map((s, i) => {
+    const isDone    = localStorage.getItem(`completed:${s.id}`) === 'true';
+    const prevDone  = i === 0 || localStorage.getItem(`completed:${scenarios[i - 1].id}`) === 'true';
+    const isCurrent = !isDone && prevDone;
+    const href      = `scenario.html?id=${encodeURIComponent(s.id)}&track=${encodeURIComponent(track.id)}`;
+    const num       = String(i + 1).padStart(2, '0');
+    const diff      = (s.difficulty || 'beginner').toUpperCase();
+    const diffCls   = difficultyClass(s.difficulty);
+    const title     = escHtml((s.title || s.id).toUpperCase());
+    const desc      = escHtml(truncate(s.problem || '', 110));
+
+    if (isDone) {
+      return `
+        <a class="tsc-card tsc-done animate" href="${href}">
+          <div class="tsc-top">
+            <span class="tsc-num">${num}</span>
+            <span class="tsc-status tsc-status-done">&#10003; DONE</span>
+          </div>
+          <span class="card-label ${diffCls}">${diff}</span>
+          <h4 class="tsc-title">${title}</h4>
+          <p class="tsc-desc">${desc}</p>
+          <span class="tsc-cta">REVISIT <span class="arrow">&#8594;</span></span>
+        </a>`;
+    }
+
+    if (isCurrent) {
+      return `
+        <a class="tsc-card tsc-current animate" href="${href}">
+          <div class="tsc-top">
+            <span class="tsc-num">${num}</span>
+            <span class="tsc-status tsc-status-current">&#9654; UP NEXT</span>
+          </div>
+          <span class="card-label ${diffCls}">${diff}</span>
+          <h4 class="tsc-title">${title}</h4>
+          <p class="tsc-desc">${desc}</p>
+          <span class="tsc-cta">START <span class="arrow">&#8594;</span></span>
+        </a>`;
+    }
+
+    return `
+      <div class="tsc-card tsc-locked animate">
+        <div class="tsc-top">
+          <span class="tsc-num">${num}</span>
+          <span class="tsc-status tsc-status-locked">&#128274; LOCKED</span>
+        </div>
+        <span class="card-label ${diffCls}">${diff}</span>
+        <h4 class="tsc-title">${title}</h4>
+        <p class="tsc-desc">${desc}</p>
+        <button class="tsc-skip-btn"
+          data-track-id="${escHtml(track.id)}"
+          data-up-to="${i}">skip prerequisites</button>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="track-block animate">
+      <div class="track-bar">
+        <div class="track-bar-left">
+          ${env ? `<span class="track-env-tag">${env} ENVIRONMENT</span>` : ''}
+          <h3 class="track-bar-title">${escHtml((track.title || track.id).toUpperCase())}</h3>
+          <p class="track-bar-desc">${escHtml(truncate(track.description || '', 160))}</p>
+        </div>
+        <div class="track-bar-right">
+          <p class="track-bar-progress-label">${completed} / ${total} COMPLETED</p>
+          <div class="track-bar-progress">
+            <div class="track-bar-progress-fill" style="width:${pct}%"></div>
+          </div>
+          <a class="track-bar-cta" href="${ctaHref}">${ctaLabel} <span class="arrow">&#8594;</span></a>
+        </div>
+      </div>
+      <div class="tsc-grid">
+        ${cards}
+      </div>
+    </div>`;
+}
+
 /* ── Render Tracks ───────────────────────────────────────────────────── */
-function renderTracks(tracks) {
+function paintTracks() {
+  const grid = document.getElementById('tracks-grid');
+  grid.innerHTML = _enrichedTracks.map(buildTrackBlock).join('');
+  grid.querySelectorAll('.animate').forEach(el => scrollRevealObserver.observe(el));
+
+  grid.querySelectorAll('.tsc-skip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const trackId = btn.dataset.trackId;
+      const upTo    = parseInt(btn.dataset.upTo, 10);
+      const track   = _enrichedTracks.find(t => t.id === trackId);
+      if (!track) return;
+      track.scenarioData.slice(0, upTo).forEach(s => {
+        localStorage.setItem(`completed:${s.id}`, 'true');
+      });
+      paintTracks();
+    });
+  });
+}
+
+async function renderTracks(tracks) {
   const grid = document.getElementById('tracks-grid');
 
   if (!Array.isArray(tracks) || tracks.length === 0) {
@@ -263,11 +343,18 @@ function renderTracks(tracks) {
     return;
   }
 
-  grid.innerHTML = tracks.map(buildTrackCard).join('');
+  _enrichedTracks = await Promise.all(tracks.map(async track => {
+    const ids     = Array.isArray(track.scenarios) ? track.scenarios : [];
+    const results = await Promise.allSettled(
+      ids.map(id => fetchScenario(id, `tracks/${track.id}`))
+    );
+    const scenarioData = results.map((r, i) =>
+      r.status === 'fulfilled' ? r.value : { id: ids[i], title: ids[i], difficulty: 'beginner', problem: '' }
+    );
+    return { ...track, scenarioData };
+  }));
 
-  grid.querySelectorAll('.animate').forEach(el => {
-    scrollRevealObserver.observe(el);
-  });
+  paintTracks();
 }
 
 /* ── Global Observer (used by render functions) ─────────────────────── */
