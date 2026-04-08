@@ -1,0 +1,32 @@
+{
+  "id": "nginx-reverse-proxy",
+  "title": "Put nginx in front of your Node app",
+  "type": "series",
+  "difficulty": "intermediate",
+  "tags": ["nginx", "reverse-proxy", "networking"],
+  "series": {
+    "track_id": "deploy-like-a-real-engineer",
+    "track_title": "Deploy like a real engineer",
+    "order": 3,
+    "requires": ["node-app-deploy"],
+    "requires_description": "Node app must be running on port 3000 and managed by pm2",
+    "environment": "vps"
+  },
+  "problem": "Your Node app is running on port 3000 but port 3000 should never be exposed directly to the internet. Configure nginx to sit in front of it — all requests come in on port 80 and nginx forwards them silently to port 3000. This is how every production app is served.",
+  "setup": {
+    "description": "Verify both nginx and your Node app are running before starting.",
+    "commands": [
+      "sudo systemctl status nginx",
+      "pm2 status",
+      "curl http://localhost:3000"
+    ],
+    "note": "All three must succeed. If curl on port 3000 fails go back and complete scenario 02 first."
+  },
+  "hints": [
+    "The nginx config on Amazon Linux lives in /etc/nginx/nginx.conf — find the location / block inside the server block",
+    "Replace everything inside location / with proxy_pass http://localhost:3000 and two proxy_set_header lines to forward the real client IP",
+    "Always run nginx -t before reloading — it validates your config and tells you exactly what is wrong if you made a syntax mistake"
+  ],
+  "commands": ["nano", "nginx", "systemctl", "curl"],
+  "solution": "1. Open nginx config:\n   sudo nano /etc/nginx/nginx.conf\n   # Main config file on Amazon Linux.\n2. Find the location block:\n   location / { ... }\n   # It is inside the server { } block.\n3. Replace the block with:\n   location / {\n       proxy_pass http://localhost:3000;\n       proxy_set_header Host $host;\n       proxy_set_header X-Real-IP $remote_addr;\n   }\n   # proxy_pass silently forwards all traffic to your Node app on port 3000.\n4. Test config:\n   sudo nginx -t\n   # Never skip this — it catches syntax errors before reload.\n5. Reload nginx:\n   sudo systemctl reload nginx\n   # Applies changes without dropping existing connections.\n6. Test locally:\n   curl http://localhost\n   # Port 80 should now return your Node app response.\n7. Test from outside:\n   curl http://YOUR_EC2_IP\n   # Run this from your local machine or browser.\n8. Confirm port 3000 is private:\n   curl http://YOUR_EC2_IP:3000\n   # This should fail or timeout — port 3000 must not be publicly exposed."
+}

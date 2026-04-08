@@ -8,7 +8,8 @@
       "environment": "vps",
       "scenarios": [
         "nginx-static-site", 
-        "node-app-deploy"
+        "node-app-deploy",
+        "nginx-reverse-proxy"
 
       ]
     }
