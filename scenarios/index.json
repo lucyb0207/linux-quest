@@ -9,7 +9,8 @@
       "scenarios": [
         "nginx-static-site", 
         "node-app-deploy",
-        "nginx-reverse-proxy"
+        "nginx-reverse-proxy",
+        "firewall-ufw"
 
       ]
     }
