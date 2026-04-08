@@ -10,7 +10,10 @@
         "nginx-static-site", 
         "node-app-deploy",
         "nginx-reverse-proxy",
-        "firewall-ufw"
+        "firewall-ufw",
+        "env-variables",
+        "port-management"
+
 
       ]
     }

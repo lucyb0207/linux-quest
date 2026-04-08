@@ -1,0 +1,32 @@
+{
+  "id": "port-management",
+  "title": "Understand and manage ports on your server",
+  "type": "series",
+  "difficulty": "intermediate",
+  "tags": ["ports", "networking", "security", "troubleshooting"],
+  "series": {
+    "track_id": "deploy-like-a-real-engineer",
+    "track_title": "Deploy like a real engineer",
+    "order": 6,
+    "requires": ["env-variables"],
+    "requires_description": "Node app must be running with pm2 ecosystem config, nginx proxying on port 80, firewall active",
+    "environment": "vps"
+  },
+  "problem": "Your server is fully deployed but you have no clear picture of what is listening on what port, why, and whether it should be public or private. A new team member asks — what ports are open on this server and why? You should be able to answer that confidently. Audit every port, understand each one, and close anything that should not be open.",
+  "setup": {
+    "description": "Verify your full stack is running before starting this audit.",
+    "commands": [
+      "sudo systemctl status nginx",
+      "pm2 status",
+      "sudo firewall-cmd --list-all"
+    ],
+    "note": "All services must be running. This scenario is a full audit of everything you have built in this track."
+  },
+  "hints": [
+    "ss -tlnp gives you every listening port with the process name — cross reference this with your firewall rules to spot anything exposed that should not be",
+    "A port being open locally does not mean it is reachable from outside — firewalld controls what is publicly accessible. Use firewall-cmd --list-all to see what is allowed through",
+    "To change the port your Node app runs on update the PORT value in ecosystem.config.js and restart pm2 — then update the proxy_pass in nginx.conf to match and reload nginx"
+  ],
+  "commands": ["ss", "firewall-cmd", "lsof", "curl", "pm2", "nano"],
+  "solution": "1. List all listening ports:\n   sudo ss -tlnp\n   # Shows port, state and owning process.\n2. Check firewall rules:\n   sudo firewall-cmd --list-all\n   # See what is actually open to the outside.\n3. Cross reference:\n   compare ss output with firewall rules\n   # Anything in ss but not in the firewall rules is private only.\n4. Check specific port:\n   sudo ss -tlnp | grep :3000\n   # Confirm Node is on 3000.\n5. Check who owns a port:\n   sudo lsof -i :80\n   # Shows which process is using port 80.\n6. Test public exposure:\n   curl http://YOUR_EC2_IP:3000\n   # Should fail — blocked by firewall.\n7. Test public exposure:\n   curl http://YOUR_EC2_IP:80\n   # Should work — nginx is public on port 80.\n8. Change app port if needed:\n   nano ~/node-hello/ecosystem.config.js\n   # Update the PORT value in the env block.\n9. Restart app on new port:\n   pm2 restart ecosystem.config.js\n   # Apply the new port.\n10. Update nginx proxy:\n   sudo nano /etc/nginx/nginx.conf\n   # Update proxy_pass to match the new port.\n11. Test nginx config:\n   sudo nginx -t\n   # Validate before reloading — never skip this.\n12. Reload nginx:\n   sudo systemctl reload nginx\n   # Apply changes without downtime.\n13. Final audit:\n   sudo ss -tlnp && sudo firewall-cmd --list-all\n   # Clean picture of everything running on your server."
+}

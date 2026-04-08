@@ -223,28 +223,54 @@ function renderSolution(text) {
     /*
      * Determine if the first line is a description label:
      * it ends with ":" AND there are more non-empty lines after it.
+     * Keep restLines with original indentation so multi-line blocks
+     * can be displayed with their relative indentation intact.
      */
-    const restLines = step.lines.slice(1).map(l => l.trim()).filter(Boolean);
-    const hasLabel  = firstLine.trimEnd().endsWith(':') && restLines.length > 0;
+    const restLines    = step.lines.slice(1);
+    const nonEmptyTrimmed = restLines.map(l => l.trim()).filter(Boolean);
+    const hasLabel  = firstLine.trimEnd().endsWith(':') && nonEmptyTrimmed.length > 0;
 
-    let labelHtml = '';
-    let cmdLines  = [];
+    let labelHtml  = '';
+    let sourceLines = [];   /* lines with original indentation */
 
     if (hasLabel) {
-      /* First line is a human-readable label; rest are commands */
-      labelHtml = `<p class="sp-step-label">${escHtml(firstLine.trim())}</p>`;
-      cmdLines  = restLines;
+      labelHtml   = `<p class="sp-step-label">${escHtml(firstLine.trim())}</p>`;
+      sourceLines = restLines;
     } else {
-      /* All non-empty lines (including first) are commands */
-      cmdLines = [firstLine.trim(), ...restLines].filter(Boolean);
+      sourceLines = [firstLine, ...restLines];
     }
 
-    const cmdsHtml = cmdLines.map(cmd => {
-      /* Lines starting with "# " are step explanations, not commands */
-      if (cmd.startsWith('# ')) {
-        return `<p class="sp-step-explanation">${escHtml(cmd.slice(2).trim())}</p>`;
-      }
+    /* Compute the minimum leading-space count across non-empty, non-comment
+       code lines so we can strip the common indent when displaying. */
+    const codeOnlyLines = sourceLines.filter(l => l.trim() && !l.trim().startsWith('# '));
+    const minIndent = codeOnlyLines.reduce((min, l) => {
+      return Math.min(min, l.match(/^(\s*)/)[1].length);
+    }, Infinity);
+    const strip = isFinite(minIndent) ? minIndent : 0;
 
+    /* Separate code lines from comment/explanation lines */
+    const codeLines    = [];
+    const commentLines = [];
+    sourceLines.filter(l => l.trim()).forEach(l => {
+      const trimmed = l.trim();
+      if (trimmed.startsWith('# ')) {
+        commentLines.push(trimmed.slice(2).trim());
+      } else {
+        codeLines.push(l.slice(strip));   /* strip common indent only */
+      }
+    });
+
+    let cmdsHtml = '';
+
+    if (codeLines.length > 1) {
+      /* Multi-line code block — one single copy button for the whole thing */
+      const codeBlock = codeLines.join('\n');
+      cmdsHtml += `<div class="sp-step-cmd">
+        <code class="sp-step-code">${escHtml(codeBlock)}</code>
+        <button class="sp-copy-btn" data-copy="${escHtml(codeBlock)}">COPY</button>
+      </div>`;
+    } else if (codeLines.length === 1) {
+      const cmd = codeLines[0].trim();
       /*
        * Split "Label:   command" on the first colon followed by 2+ spaces.
        * This separates display labels from the copyable command without
@@ -252,16 +278,20 @@ function renderSolution(text) {
        */
       const split = cmd.match(/^([^:]+):\s{2,}(.+)$/);
       const label = split ? split[1].trim() : null;
-      const command = split ? split[2].trim() : cmd.trim();
-      const labelHtml = label
+      const command = split ? split[2].trim() : cmd;
+      const cmdLabelHtml = label
         ? `<span class="sp-step-cmd-label">${escHtml(label)}</span>`
         : '';
-      return `<div class="sp-step-cmd">
-        ${labelHtml}
+      cmdsHtml += `<div class="sp-step-cmd">
+        ${cmdLabelHtml}
         <code class="sp-step-code">${escHtml(command)}</code>
         <button class="sp-copy-btn" data-copy="${escHtml(command)}">COPY</button>
       </div>`;
-    }).join('');
+    }
+
+    cmdsHtml += commentLines.map(exp =>
+      `<p class="sp-step-explanation">${escHtml(exp)}</p>`
+    ).join('');
 
     return `<div class="sp-step">
       <span class="sp-step-num">${escHtml(step.num)}</span>

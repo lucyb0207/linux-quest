@@ -1,0 +1,31 @@
+{
+  "id": "env-variables",
+  "title": "Configure your app with environment variables",
+  "type": "series",
+  "difficulty": "intermediate",
+  "tags": ["environment", "configuration", "security", "pm2"],
+  "series": {
+    "track_id": "deploy-like-a-real-engineer",
+    "track_title": "Deploy like a real engineer",
+    "order": 5,
+    "requires": ["firewall-ufw"],
+    "requires_description": "Server must be locked down with firewalld, nginx proxying to Node app on port 3000",
+    "environment": "vps"
+  },
+  "problem": "Your app is hardcoding configuration values like port, database URL and API keys directly in the code. That is a serious problem — secrets end up in git, changing config requires a code change, and different environments need different values. Move everything out of the code and into environment variables.",
+  "setup": {
+    "description": "Check your running app and pm2 setup before starting.",
+    "commands": [
+      "pm2 status",
+      "pm2 env 0"
+    ],
+    "note": "pm2 env 0 shows the current environment variables your app sees. Note what is there before you start."
+  },
+  "hints": [
+    "There are two ways to set env vars with pm2 — inline with pm2 start index.js --env production or via an ecosystem.config.js file. The config file is the proper way for real apps",
+    "Create an ecosystem.config.js at the root of your app — it defines your app name, script, and an env block with all your variables. pm2 start ecosystem.config.js to use it",
+    "Never commit secrets to git — put sensitive values in a .env file, add .env to .gitignore, and load them in ecosystem.config.js or directly in your app with the dotenv package"
+  ],
+  "commands": ["pm2", "nano", "cat", "echo", "printenv"],
+  "solution": "1. Check current env:\n   pm2 env 0\n   # See what environment variables your app currently receives.\n2. Create ecosystem file:\n   nano ~/node-hello/ecosystem.config.js\n   # pm2 config file — the proper way to manage app config.\n3. Add this content:\n   module.exports = {\n     apps: [{\n       name: 'node-hello',\n       script: 'index.js',\n       env: {\n         NODE_ENV: 'production',\n         PORT: 3000,\n         APP_SECRET: 'your-secret-here'\n       }\n     }]\n   }\n   # NODE_ENV, PORT and APP_SECRET will be injected into process.env.\n4. Create .env file:\n   nano ~/node-hello/.env\n   # For sensitive values that must never be committed.\n5. Add to .gitignore:\n   echo '.env' >> ~/node-hello/.gitignore\n   # Never commit secrets to git.\n6. Restart with ecosystem:\n   pm2 delete node-hello && pm2 start ecosystem.config.js\n   # Reload pm2 with the new config.\n7. Verify env vars:\n   pm2 env 0\n   # Confirm your variables are now visible to the app.\n8. Check app still works:\n   curl http://localhost:3000\n   # App must still respond after the restart.\n9. Save pm2 state:\n   pm2 save\n   # Locks in the new config to survive reboots.\n10. Verify in app:\n   printenv NODE_ENV\n   # Confirm the environment variable is set."
+}

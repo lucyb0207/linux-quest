@@ -2,7 +2,7 @@
   "id": "firewall-ufw",
   "title": "Lock down your server with a firewall",
   "type": "series",
-  "difficulty": "intermediate",
+  "difficulty": "advanced",
   "tags": ["firewall", "security", "ufw", "ports"],
   "series": {
     "track_id": "deploy-like-a-real-engineer",
@@ -27,5 +27,5 @@
     "firewall-cmd --permanent makes rules survive reboots, without --permanent rules are lost on restart. Always follow with firewall-cmd --reload to apply"
   ],
   "commands": ["firewall-cmd", "systemctl", "ss", "curl"],
-  "solution": "1. Check listening ports:     sudo ss -tlnp  # see everything currently exposed\n2. Install firewalld:         sudo yum install -y firewalld  # if not already installed\n3. Start firewalld:           sudo systemctl start firewalld  # start the service\n4. Enable on boot:            sudo systemctl enable firewalld  # survive reboots\n5. Check current rules:       sudo firewall-cmd --list-all  # see default zone rules\n6. Allow SSH first:           sudo firewall-cmd --permanent --add-service=ssh  # never lock yourself out\n7. Allow HTTP:                sudo firewall-cmd --permanent --add-service=http  # port 80 for nginx\n8. Reload rules:              sudo firewall-cmd --reload  # apply permanent rules\n9. Verify rules:              sudo firewall-cmd --list-all  # confirm ssh and http are listed\n10. Test SSH still works:     open a second terminal and SSH in  # confirm before closing current session\n11. Test app still works:     curl http://YOUR_EC2_IP  # nginx should still respond\n12. Test port 3000 blocked:   curl http://YOUR_EC2_IP:3000  # should timeout or refuse"
+  "solution": "1. Check listening ports:\n   sudo ss -tlnp\n   # See everything currently exposed.\n2. Install firewalld:\n   sudo yum install -y firewalld\n   # Install if not already present.\n3. Start firewalld:\n   sudo systemctl start firewalld\n   # Start the service immediately.\n4. Enable on boot:\n   sudo systemctl enable firewalld\n   # Ensures firewalld restarts after a reboot.\n5. Check current rules:\n   sudo firewall-cmd --list-all\n   # See the default zone rules before making changes.\n6. Allow SSH first:\n   sudo firewall-cmd --permanent --add-service=ssh\n   # Do this before anything else — never lock yourself out.\n7. Allow HTTP:\n   sudo firewall-cmd --permanent --add-service=http\n   # Opens port 80 for nginx.\n8. Reload rules:\n   sudo firewall-cmd --reload\n   # Applies permanent rules to the running firewall.\n9. Verify rules:\n   sudo firewall-cmd --list-all\n   # Confirm ssh and http are listed under services.\n10. Test SSH still works:\n   open a second terminal and SSH in\n   # Confirm access before closing your current session.\n11. Test app still works:\n   curl http://YOUR_EC2_IP\n   # nginx should still respond on port 80.\n12. Test port 3000 blocked:\n   curl http://YOUR_EC2_IP:3000\n   # Should timeout or refuse — Node app must not be directly reachable."
 }
