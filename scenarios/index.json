@@ -7,7 +7,9 @@
       "description": "Go from a blank VPS to a deployed Node app with nginx, firewall and environment config.",
       "environment": "vps",
       "scenarios": [
-        "nginx-static-site"
+        "nginx-static-site", 
+        "node-app-deploy"
+
       ]
     }
   ]

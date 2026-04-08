@@ -1,0 +1,31 @@
+{
+  "id": "node-app-deploy",
+  "title": "Deploy a real Node app on your server",
+  "type": "series",
+  "difficulty": "intermediate",
+  "tags": ["node", "pm2", "deployment", "process-management"],
+  "series": {
+    "track_id": "deploy-like-a-real-engineer",
+    "track_title": "Deploy like a real engineer",
+    "order": 2,
+    "requires": ["nginx-static-site"],
+    "requires_description": "nginx must be installed and running on port 80",
+    "environment": "vps"
+  },
+  "problem": "Deploy a real Node.js app on your server and keep it alive. The app must survive crashes and server reboots — if it goes down it should come back up on its own. The app will run on port 3000. We will put nginx in front of it in the next scenario.",
+  "setup": {
+    "description": "Make sure Node.js is installed and note the app repo you will be deploying.",
+    "commands": [
+      "node -v",
+      "npm -v"
+    ],
+    "note": "If node is not found install it: sudo yum install -y nodejs. If you need a newer version use nvm — curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash. App you will deploy: https://github.com/developit/node-hello"
+  },
+  "hints": [
+    "Clone the app repo from the link in setup, cd into it and run npm install to install dependencies",
+    "Running node app.js directly is not enough — if it crashes or the server reboots the app dies. You need a process manager — pm2 is the industry standard, install it with npm install -g pm2",
+    "pm2 start app.js starts the app, pm2 startup generates the command to make it survive reboots, pm2 save locks in the current process list"
+  ],
+  "commands": ["git", "node", "npm", "pm2"],
+  "solution": "1. Install git if missing:    sudo yum install -y git  # needed to clone the repo\n2. Clone the app:             git clone https://github.com/developit/node-hello  # free hello world node app\n3. Enter the directory:       cd node-hello  # move into the project\n4. Install dependencies:      npm install  # install what package.json requires\n5. Test it runs:              node index.js  # confirm it starts, then Ctrl+C to stop\n6. Install pm2:               sudo npm install -g pm2  # process manager, keeps app alive\n7. Start with pm2:            pm2 start index.js --name node-hello  # start and give it a name\n8. Check it is running:       pm2 status  # should show node-hello as online\n9. Test the app:              curl http://localhost:3000  # should return Hello World\n10. Generate startup hook:    pm2 startup  # pm2 prints a command, copy and run it\n11. Save process list:        pm2 save  # locks in current processes to survive reboot\n12. Verify after reboot:      sudo reboot  # optional — SSH back in and run pm2 status"
+}

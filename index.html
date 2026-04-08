@@ -70,6 +70,17 @@
     </div>
   </div>
 
+  <!-- ── Continue Banner ──────────────────────────────────────────────── -->
+  <div class="continue-banner" id="continue-banner" hidden>
+    <div class="continue-inner">
+      <span class="continue-label">CONTINUE WHERE YOU LEFT OFF</span>
+      <a class="continue-link" id="continue-link" href="#">
+        <span class="continue-title" id="continue-title"></span>
+        <span class="continue-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
   <!-- ── Standalone Scenarios ───────────────────────────────────────── -->
   <section class="scene scene-standalone" id="standalone">
     <div class="scene-inner">
@@ -78,9 +89,15 @@
         <h2 class="scene-title">STANDALONE SCENARIOS</h2>
         <p class="scene-desc">Drop-in practice scenarios you can run in any Linux terminal. Each one is self-contained — set up, break, fix, repeat.</p>
       </header>
-      <div id="standalone-grid" class="scenario-grid" aria-live="polite">
-        <p class="state-msg">LOADING SCENARIOS…</p>
+      <!-- Filter bar -->
+      <div class="filter-bar animate" id="filter-bar" hidden>
+        <button class="filter-pill active" data-filter="all">ALL</button>
+        <button class="filter-pill" data-filter="beginner">BEGINNER</button>
+        <button class="filter-pill" data-filter="intermediate">INTERMEDIATE</button>
+        <button class="filter-pill" data-filter="advanced">ADVANCED</button>
       </div>
+
+      <div id="standalone-grid" class="scenario-grid" aria-live="polite"></div>
     </div>
   </section>
 

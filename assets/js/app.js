@@ -168,13 +168,27 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/* ── Skeleton Cards ─────────────────────────────────────────────────── */
+function renderSkeletons(grid, count) {
+  grid.innerHTML = Array.from({ length: count }, () => `
+    <div class="sk-card" aria-hidden="true">
+      <div class="sk-line sk-line-sm"></div>
+      <div class="sk-line sk-line-xl"></div>
+      <div class="sk-line sk-line-lg"></div>
+      <div class="sk-line sk-line-md"></div>
+      <div class="sk-line sk-line-md" style="width:70%"></div>
+    </div>
+  `).join('');
+}
+
 /* ── Scenario Card ───────────────────────────────────────────────────── */
 function buildScenarioCard(scenario) {
   const done = localStorage.getItem(`completed:${scenario.id}`) === 'true';
   const diff = (scenario.difficulty || 'beginner').toUpperCase();
+  const diffKey = (scenario.difficulty || 'beginner').toLowerCase();
   const href = `scenario.html?id=${encodeURIComponent(scenario.id)}`;
   return `
-    <a class="scenario-card animate" href="${href}">
+    <a class="scenario-card animate" href="${href}" data-difficulty="${diffKey}">
       <div class="card-header">
         <div class="card-meta">
           <span class="card-label ${difficultyClass(scenario.difficulty)}">${diff}</span>
@@ -197,7 +211,31 @@ async function fetchScenario(id, folder) {
   return res.json();
 }
 
+/* ── Filter ───────────────────────────────────────────────────────────── */
+function initFilter() {
+  const bar   = document.getElementById('filter-bar');
+  const pills = bar.querySelectorAll('.filter-pill');
+  const grid  = document.getElementById('standalone-grid');
+
+  bar.hidden = false;
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+
+      const filter = pill.dataset.filter;
+      grid.querySelectorAll('.scenario-card').forEach(card => {
+        const match = filter === 'all' || card.dataset.difficulty === filter;
+        card.classList.toggle('filter-hidden', !match);
+      });
+    });
+  });
+}
+
 /* ── Render Standalone ───────────────────────────────────────────────── */
+let _standaloneScenarios = [];
+
 async function renderStandalone(ids) {
   const grid = document.getElementById('standalone-grid');
 
@@ -206,21 +244,25 @@ async function renderStandalone(ids) {
     return;
   }
 
+  renderSkeletons(grid, ids.length);
+
   const results = await Promise.allSettled(
     ids.map(id => fetchScenario(id, 'standalone'))
   );
 
-  const cards = results
+  _standaloneScenarios = results
     .filter(r => r.status === 'fulfilled')
-    .map(r => buildScenarioCard(r.value))
-    .join('');
+    .map(r => r.value);
 
+  const cards = _standaloneScenarios.map(buildScenarioCard).join('');
   grid.innerHTML = cards || `<p class="state-msg">COULD NOT LOAD SCENARIOS.</p>`;
 
   /* Observe newly injected cards */
   grid.querySelectorAll('.animate').forEach(el => {
     scrollRevealObserver.observe(el);
   });
+
+  if (_standaloneScenarios.length > 0) initFilter();
 }
 
 /* ── Track Block ─────────────────────────────────────────────────────── */
@@ -343,6 +385,8 @@ async function renderTracks(tracks) {
     return;
   }
 
+  renderSkeletons(grid, Math.min(tracks.length * 2, 4));
+
   _enrichedTracks = await Promise.all(tracks.map(async track => {
     const ids     = Array.isArray(track.scenarios) ? track.scenarios : [];
     const results = await Promise.allSettled(
@@ -355,6 +399,47 @@ async function renderTracks(tracks) {
   }));
 
   paintTracks();
+}
+
+/* ── Continue Banner ─────────────────────────────────────────────────── */
+function initContinueBanner() {
+  const hasProgress =
+    _standaloneScenarios.some(s => localStorage.getItem(`completed:${s.id}`) === 'true') ||
+    _enrichedTracks.some(t => t.scenarioData.some(s => localStorage.getItem(`completed:${s.id}`) === 'true'));
+
+  if (!hasProgress) return;
+
+  /* Prefer a started (partially complete) track */
+  let title = null, href = null;
+  for (const track of _enrichedTracks) {
+    const anyDone = track.scenarioData.some(s => localStorage.getItem(`completed:${s.id}`) === 'true');
+    const firstIncomplete = track.scenarioData.find(s => localStorage.getItem(`completed:${s.id}`) !== 'true');
+    if (anyDone && firstIncomplete) {
+      title = (firstIncomplete.title || firstIncomplete.id).toUpperCase();
+      href  = `scenario.html?id=${encodeURIComponent(firstIncomplete.id)}&track=${encodeURIComponent(track.id)}`;
+      break;
+    }
+  }
+
+  /* Fall back to first incomplete standalone */
+  if (!title) {
+    const next = _standaloneScenarios.find(s => localStorage.getItem(`completed:${s.id}`) !== 'true');
+    if (next) {
+      title = (next.title || next.id).toUpperCase();
+      href  = `scenario.html?id=${encodeURIComponent(next.id)}`;
+    }
+  }
+
+  if (!title) return;
+
+  const banner = document.getElementById('continue-banner');
+  const link   = document.getElementById('continue-link');
+  const titleEl = document.getElementById('continue-title');
+  if (!banner || !link || !titleEl) return;
+
+  titleEl.textContent = title;
+  link.href = href;
+  banner.hidden = false;
 }
 
 /* ── Global Observer (used by render functions) ─────────────────────── */
@@ -389,7 +474,8 @@ async function init() {
 
     updateStats(standalone.length, tracks.length);
     await renderStandalone(standalone);
-    renderTracks(tracks);
+    await renderTracks(tracks);
+    initContinueBanner();
   } catch (err) {
     document.getElementById('standalone-grid').innerHTML =
       `<p class="state-msg">FAILED TO LOAD — SERVE OVER HTTP, NOT FILE://</p>`;

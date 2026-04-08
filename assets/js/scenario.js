@@ -309,11 +309,38 @@ function updateCompleteBtn(id) {
   btn.classList.toggle('sp-complete-done', done);
 }
 
-function initCompleteBtn(id, trackScenarios) {
+function showNextScenarioBtn(id, trackId, trackScenarios) {
+  const wrap = document.getElementById('sp-next-wrap');
+  if (!wrap) return;
+
+  const idx  = trackScenarios.indexOf(id);
+  const nextId = trackScenarios[idx + 1];
+  if (!nextId) return;
+
+  wrap.innerHTML = `
+    <div>
+      <p class="sp-next-label">TRACK — UP NEXT</p>
+      <p class="sp-next-title">STEP ${idx + 2} OF ${trackScenarios.length}</p>
+    </div>
+    <a class="sp-next-btn"
+       href="scenario.html?id=${encodeURIComponent(nextId)}&track=${encodeURIComponent(trackId)}">
+      NEXT <span class="arrow">→</span>
+    </a>`;
+  wrap.className = 'sp-next-wrap';
+  wrap.hidden = false;
+}
+
+function initCompleteBtn(id, trackId, trackScenarios) {
   document.getElementById('sp-complete-btn').addEventListener('click', () => {
     const done = localStorage.getItem(`completed:${id}`) === 'true';
-    if (done) { localStorage.removeItem(`completed:${id}`); }
-    else      { localStorage.setItem(`completed:${id}`, 'true'); }
+    if (done) {
+      localStorage.removeItem(`completed:${id}`);
+      const wrap = document.getElementById('sp-next-wrap');
+      if (wrap) wrap.hidden = true;
+    } else {
+      localStorage.setItem(`completed:${id}`, 'true');
+      if (trackScenarios && trackId) showNextScenarioBtn(id, trackId, trackScenarios);
+    }
     updateCompleteBtn(id);
     if (trackScenarios) renderTrackProgress(trackScenarios, id);
   });
@@ -378,6 +405,10 @@ function renderScenario(scenario, trackId, trackScenarios) {
 
   /* Track nav */
   if (trackId && trackScenarios) {
+    /* Show next button immediately if this scenario is already complete */
+    if (localStorage.getItem(`completed:${scenario.id}`) === 'true') {
+      showNextScenarioBtn(scenario.id, trackId, trackScenarios);
+    }
     renderTrackProgress(trackScenarios, scenario.id);
 
     const resetBtn = document.getElementById('sp-reset-btn');
@@ -387,6 +418,8 @@ function renderScenario(scenario, trackId, trackScenarios) {
         trackScenarios.forEach(id => localStorage.removeItem(`completed:${id}`));
         updateCompleteBtn(scenario.id);
         renderTrackProgress(trackScenarios, scenario.id);
+        const wrap = document.getElementById('sp-next-wrap');
+        if (wrap) wrap.hidden = true;
       }
     });
   }
@@ -425,7 +458,7 @@ async function init() {
     document.getElementById('sp-loading').hidden = true;
     renderScenario(scenario, trackId, trackScenarios);
     initSolutionToggle(scenario.solution || '');
-    initCompleteBtn(scenario.id, trackScenarios);
+    initCompleteBtn(scenario.id, trackId, trackScenarios);
     initScrollAnimations();
 
   } catch (err) {
