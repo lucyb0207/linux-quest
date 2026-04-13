@@ -1,5 +1,5 @@
 {
-  "standalone": ["explore-new-server", "create-dev-user-ssh", "kill-hungry-process", "disk-almost-full", "server-breach-audit"],
+  "standalone": ["explore-new-server", "create-dev-user-ssh", "fix-broken-permissions", "cron-job-debug", "kill-hungry-process", "disk-almost-full", "server-breach-audit"],
   "tracks": [
     {
       "id": "deploy-like-a-real-engineer",

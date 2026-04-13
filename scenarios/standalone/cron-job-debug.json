@@ -1,0 +1,28 @@
+{
+  "id": "cron-job-debug",
+  "title": "Your backup script hasn't run in days",
+  "type": "standalone",
+  "difficulty": "intermediate",
+  "tags": ["cron", "scheduling", "debugging", "logging", "automation"],
+  "problem": "A nightly backup script at /opt/backup.sh was set up weeks ago by a colleague. The S3 uploads stopped appearing 3 days ago — nobody touched the script, the server is up, and cron is supposedly running. Figure out why cron stopped executing it and fix the crontab.",
+  "setup": {
+    "description": "Create the backup script and install a broken crontab entry that silently fails.",
+    "commands": [
+      "sudo mkdir -p /opt",
+      "sudo bash -c 'echo -e \"#!/bin/bash\\necho Backing up to S3... >> /var/log/backup.log\" > /opt/backup.sh'",
+      "sudo chmod 744 /opt/backup.sh",
+      "crontab -l > /tmp/cron_backup 2>/dev/null || true",
+      "echo '0 2 * * * root /opt/backup.sh >> /var/log/backup.log 2>&1' >> /tmp/cron_backup",
+      "crontab /tmp/cron_backup"
+    ],
+    "verify": "crontab -l | grep backup",
+    "note": "The bug is subtle: the word 'root' in a personal crontab is treated as the command to run, not a username. That field only belongs in /etc/cron.d/ files."
+  },
+  "hints": [
+    "Start by checking that the cron daemon is actually running, then look at the system cron logs — they record every attempted execution.",
+    "Run crontab -l to inspect your crontab. Compare the format to the man page: five time fields, then directly the command. Anything extra before the command is suspicious.",
+    "The word 'root' in a user crontab is not a username — cron treats it as the command and tries to execute a binary called 'root', which does not exist. Remove it so the line reads: 0 2 * * * /opt/backup.sh >> /var/log/backup.log 2>&1"
+  ],
+  "commands": ["crontab", "systemctl", "grep", "tail", "cat", "bash"],
+  "solution": "1. Check that cron is running:\n   systemctl status cron\n   # On RHEL/CentOS use: systemctl status crond\n\n2. Look at cron logs for failures:\n   grep CRON /var/log/syslog | tail -20\n   # On RHEL/CentOS: tail -20 /var/log/cron\n   # You will see entries like: (CRON) error (grandchild #N failed with exit status 127)\n   # Exit status 127 means 'command not found'.\n\n3. Inspect the current crontab:\n   crontab -l\n   # Output: 0 2 * * * root /opt/backup.sh >> /var/log/backup.log 2>&1\n   # Spot the bug: 'root' is in position 6 — the command field.\n   # Cron tried to run a binary called 'root'. It does not exist.\n\n4. Fix the crontab:\n   crontab -e\n   # Change the line to:\n   0 2 * * * /opt/backup.sh >> /var/log/backup.log 2>&1\n   # Save and exit the editor.\n\n5. Verify the fix:\n   crontab -l\n   # Should now show the corrected line without 'root'.\n\n6. Test the script runs manually:\n   bash /opt/backup.sh && tail /var/log/backup.log\n   # Should print: Backing up to S3..."
+}

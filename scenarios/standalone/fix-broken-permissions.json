@@ -1,0 +1,26 @@
+{
+  "id": "fix-broken-permissions",
+  "title": "A deploy script nuked the file permissions",
+  "type": "standalone",
+  "difficulty": "beginner",
+  "tags": ["permissions", "chmod", "chown", "find", "linux-basics"],
+  "problem": "A junior engineer ran 'chmod -R 777 /var/www/html' to fix a deploy issue. Now every file is world-writable, nginx is refusing to serve pages, and your security team is paging you. Restore correct permissions across the whole directory tree without touching each file by hand.",
+  "setup": {
+    "description": "Create a sample web root and apply the broken 777 permissions to simulate the incident.",
+    "commands": [
+      "sudo mkdir -p /var/www/html/assets",
+      "sudo touch /var/www/html/index.html /var/www/html/style.css /var/www/html/assets/app.js",
+      "sudo chmod -R 777 /var/www/html",
+      "sudo chown -R nobody:nogroup /var/www/html"
+    ],
+    "verify": "ls -la /var/www/html/",
+    "note": "On RHEL/CentOS the group may be 'nobody' instead of 'nogroup' and the web user is 'nginx' or 'apache' instead of 'www-data'."
+  },
+  "hints": [
+    "Directories and files need different permissions — directories need the execute bit (x) so you can cd into them, but regular files should not be executable unless they are scripts.",
+    "Use find with -type d and -type f to target only directories or only files, then run chmod on each match using -exec. This avoids setting the same mode on everything.",
+    "The safe defaults for a public web directory are 755 for directories and 644 for files. Run: find /var/www/html -type d -exec chmod 755 {} \\; and then the equivalent for files with 644."
+  ],
+  "commands": ["chmod", "chown", "find", "ls", "stat"],
+  "solution": "1. Inspect the damage:\n   ls -laR /var/www/html\n   # Every entry shows rwxrwxrwx (777) — world-writable.\n\n2. Fix directory permissions:\n   sudo find /var/www/html -type d -exec chmod 755 {} \\;\n   # 755 = owner can write, group and others can read and traverse.\n   # Directories need the execute bit so users can cd into them.\n\n3. Fix file permissions:\n   sudo find /var/www/html -type f -exec chmod 644 {} \\;\n   # 644 = owner can write, everyone else can only read.\n   # Files should not be executable unless they are shell scripts.\n\n4. Restore ownership to the web server user:\n   sudo chown -R www-data:www-data /var/www/html\n   # On RHEL/CentOS use: sudo chown -R nginx:nginx /var/www/html\n\n5. Verify the result:\n   ls -laR /var/www/html\n   # Directories should show drwxr-xr-x, files -rw-r--r--.\n\n6. Why 777 is dangerous:\n   Any user on the server — or a compromised process — can overwrite\n   your HTML, inject scripts, or replace binaries. Web servers like\n   nginx also refuse to serve files owned by others when they are\n   world-writable, as a security policy."
+}

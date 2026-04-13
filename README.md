@@ -3,7 +3,7 @@
 **Free, open source, hands-on Linux and DevOps practice scenarios.**  
 No login. No cost. No setup beyond opening a browser.
 
-[Live Site](https://hassanabdullahhere.github.io/linux-quest) · [Report a Bug](https://github.com/HassanAbdullahHere/linux-quest/issues) · [Request a Scenario](https://github.com/HassanAbdullahHere/linux-quest/issues)
+[Live Site](https://hassanabdullahhere.github.io/linux-quest/) · [Report a Bug](https://github.com/HassanAbdullahHere/linux-quest/issues) · [Request a Scenario](https://github.com/HassanAbdullahHere/linux-quest/issues)
 
 ---
 
