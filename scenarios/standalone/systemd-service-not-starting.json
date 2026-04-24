@@ -1,0 +1,28 @@
+{
+  "id": "systemd-service-not-starting",
+  "title": "Your app is down after every reboot",
+  "type": "standalone",
+  "difficulty": "advanced",
+  "tags": ["systemd", "services", "debugging", "journalctl", "devops"],
+  "problem": "You deployed a Node API to production last night, tested it manually, and went home. This morning the team is pinging you — the app is unreachable. You SSH in and the process is not running, even though the server rebooted cleanly two hours ago. The service starts fine when you run it by hand, but it never comes up on its own.",
+  "setup": {
+    "description": "Create a real systemd unit file for a fake Node API service, start it manually to confirm it works, then simulate the broken state by stopping it without the enable flag ever being set.",
+    "commands": [
+      "sudo mkdir -p /opt/nodeapi",
+      "sudo bash -c 'echo -e \"#!/bin/bash\\nwhile true; do echo API running; sleep 60; done\" > /opt/nodeapi/server.sh'",
+      "sudo chmod +x /opt/nodeapi/server.sh",
+      "sudo bash -c 'cat > /etc/systemd/system/nodeapi.service <<EOF\n[Unit]\nDescription=Node API Service\nAfter=network.target\n\n[Service]\nType=simple\nExecStart=/opt/nodeapi/server.sh\nRestart=on-failure\nUser=nobody\n\n[Install]\nWantedBy=multi-user.target\nEOF'",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start nodeapi",
+      "sudo systemctl stop nodeapi"
+    ],
+    "verify": "systemctl is-enabled nodeapi 2>&1 | grep -q disabled && echo 'BROKEN: service not enabled' || echo 'Already enabled — reset with: sudo systemctl disable nodeapi'"
+  },
+  "hints": [
+    "Check what systemd actually knows about the service and whether it survived the reboot — there is a single command that shows both the current state and whether it is configured to start automatically.",
+    "There is a difference between a service that is running and a service that is enabled — 'running' means it is active right now, 'enabled' means it is registered to start on boot. Check both states separately.",
+    "The fix is one command: sudo systemctl enable nodeapi — this creates the symlink that tells systemd to launch the service at boot. Run it, then confirm with systemctl is-enabled nodeapi."
+  ],
+  "commands": ["systemctl", "journalctl", "cat", "ls"],
+  "solution": "1. Check the service status:\n   systemctl status nodeapi\n   # Shows whether the service is active and, critically, whether it is\n   # 'enabled' or 'disabled'. You will see 'disabled' — that is the bug.\n   # Disabled means systemd will never start it on boot.\n\n2. Read the logs to confirm it was never started by the system:\n   journalctl -u nodeapi --no-pager\n   # The -u flag filters to a single unit. You will see your manual start\n   # from setup but nothing from boot time.\n   # For live log streaming: journalctl -u nodeapi -f\n\n3. Verify the enabled state explicitly:\n   systemctl is-enabled nodeapi\n   # Prints 'disabled'. This is the one-liner you would use in deploy checks.\n\n4. Enable the service so it starts on every boot:\n   sudo systemctl enable nodeapi\n   # Creates a symlink in /etc/systemd/system/multi-user.target.wants/\n   # pointing to the unit file. Systemd reads that directory on boot.\n\n5. Verify the enable took effect:\n   systemctl is-enabled nodeapi\n   # Should now print 'enabled'.\n\n6. Start it immediately without waiting for a reboot:\n   sudo systemctl start nodeapi\n   # enable handles boot time. start brings it up right now.\n\n7. Confirm it is up:\n   systemctl status nodeapi\n   # Should show 'active (running)' and 'enabled'.\n\n8. Optional — reload the daemon if you ever edit the unit file:\n   sudo systemctl daemon-reload\n   # Any time you edit /etc/systemd/system/nodeapi.service, run this\n   # so systemd re-reads the file before you restart the service.\n\n9. The correct habit for every new service deploy:\n   sudo systemctl enable --now nodeapi\n   # enable + start in a single command — never forget to enable again."
+}
